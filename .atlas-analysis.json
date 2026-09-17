@@ -1,0 +1,89 @@
+{
+  "projectType": "general",
+  "projectName": "Cesar Vilca — Agricultura de Precisión & Ciencia de Datos",
+  "projectDescription": "Blog técnico de Cesar Vilca con tutoriales y recursos sobre agricultura de precisión, teledetección, procesamiento de imágenes satelitales, SIG y programación científica con Python, R y JavaScript.",
+  "theme": "willow",
+  "primaryColor": "#d6d6d6",
+  "lightColor": "#2e2e33",
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Inicio",
+        "groups": [
+          {
+            "group": "Sobre Este Blog",
+            "pages": [
+              "introduccion",
+              "sobre-cesar",
+              "publicaciones"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Programación",
+        "groups": [
+          {
+            "group": "Python para Investigación",
+            "pages": [
+              "python/visualizaciones",
+              "python/reportes-pdf",
+              "python/anaconda"
+            ]
+          },
+          {
+            "group": "Fórmulas y Documentos",
+            "pages": [
+              "python/formulas-latex"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Teledetección & SIG",
+        "groups": [
+          {
+            "group": "Plataformas y Herramientas",
+            "pages": [
+              "sig/google-earth-engine",
+              "sig/qgis-mapas",
+              "sig/diagramas-drawio"
+            ]
+          },
+          {
+            "group": "Agricultura Digital",
+            "pages": [
+              "sig/clasificacion-cultivos",
+              "sig/computer-vision",
+              "sig/agricultura-digital"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Tutoriales de visualización científica con Python (Matplotlib, Plotly, Seaborn, geemap)",
+    "Generación de reportes PDF automatizados con ReportLab",
+    "Procesamiento de imágenes satelitales con Google Earth Engine (JavaScript y Python)",
+    "Elaboración de mapas temáticos y de ubicación con QGIS",
+    "Fórmulas científicas en LaTeX/MathJax (modelo METRIC, interpolación espacial, índices de suelo)",
+    "Clasificación de cultivos mediante teledetección y Machine Learning",
+    "Computer Vision aplicada al sector agrícola",
+    "Gestión de entornos y paquetes con Anaconda/Conda",
+    "Publicaciones científicas en revistas Frontiers y Scientia Agropecuaria"
+  ],
+  "publicApiSurface": [
+    "conda list / conda install / conda update / conda remove",
+    "conda create -n <env> python=<version>",
+    "conda activate / conda deactivate",
+    "conda search -c conda-forge <package>",
+    "pip install reportlab",
+    "earthengine-api (Python): ee.Image, ee.ImageCollection, ee.Reducer",
+    "geemap: geemap.Map(), geemap.cartoee",
+    "matplotlib.pyplot, seaborn, plotly.graph_objects",
+    "Google Earth Engine Code Editor (JavaScript)",
+    "QGIS: Kriging de regresión, IDW, análisis LISA"
+  ]
+}

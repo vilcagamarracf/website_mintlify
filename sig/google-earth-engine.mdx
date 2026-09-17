@@ -1,0 +1,167 @@
+---
+title: "Google Earth Engine: Procesamiento de Imágenes Satelitales"
+sidebarTitle: "Google Earth Engine"
+description: "Aprende a usar Google Earth Engine con JavaScript y Python para analizar imágenes satelitales Landsat y Sentinel-2 en proyectos agrícolas."
+---
+
+Google Earth Engine (GEE) es la plataforma de análisis geoespacial más poderosa disponible de forma gratuita para investigadores y organizaciones sin fines de lucro. Combinando un catálogo de imágenes satelitales de más de cuarenta años con la infraestructura de computación en la nube de Google, permite procesar y visualizar grandes volúmenes de datos geoespaciales en cuestión de segundos, lo cual lo convierte en una herramienta indispensable para el monitoreo agrícola, la clasificación de cultivos y el análisis ambiental a escala regional y global.
+
+## ¿Qué es Google Earth Engine?
+
+[Google Earth Engine](https://earthengine.google.com/) es una plataforma diseñada para el análisis científico y la visualización de conjuntos de datos geoespaciales, dirigida a usuarios académicos, organizaciones sin fines de lucro, comerciales y gubernamentales. Nació de una necesidad concreta: poner a disposición de investigadores con poca o ninguna experiencia en administración de bases de datos un repositorio de datos geoespaciales listo para usar.
+
+Según su propia documentación oficial:
+
+> "Earth Engine aloja imágenes de satélite y las almacena en un archivo de datos público que incluye imágenes históricas de la Tierra que se remontan a más de cuarenta años. Las imágenes, que se ingieren a diario, se ponen a disposición para la minería de datos a escala global. Earth Engine también proporciona API y otras herramientas para permitir el análisis de grandes conjuntos de datos."
+
+La plataforma está operativa desde el año 2011 y ha ganado popularidad de manera sostenida gracias a la potencia computacional que ofrece de forma gratuita, lo cual se ha traducido en un notable incremento de publicaciones académicas basadas en sus capacidades.
+
+## Cómo acceder
+
+Al ser un proyecto de Google, Earth Engine permite la integración con otras plataformas del ecosistema, como Google Cloud y Google Drive. Para comenzar a usarlo, sigue estos pasos:
+
+<Steps>
+  <Step title="Crea una cuenta de Gmail">
+    Necesitas una cuenta de Google activa para acceder a Earth Engine. Puedes usar tu cuenta personal o, preferiblemente, una cuenta institucional universitaria.
+  </Step>
+  <Step title="Regístrate en Earth Engine">
+    Ingresa a [https://earthengine.google.com/signup/](https://earthengine.google.com/signup/) y completa el formulario de registro seleccionando el modo **no comercial**.
+  </Step>
+  <Step title="Espera la activación de tu cuenta">
+    El tiempo de respuesta varía: puede demorar desde unos minutos hasta varias horas. Recibirás un correo de confirmación cuando tu cuenta esté activa.
+  </Step>
+  <Step title="Accede al Code Editor">
+    Una vez activada tu cuenta, ingresa al [Code Editor de Earth Engine](https://code.earthengine.google.com/) para comenzar a explorar el catálogo de datos y ejecutar tus primeros scripts.
+  </Step>
+</Steps>
+
+<Note>
+  Es preferible usar una cuenta de tipo institucional (universitaria) en lugar de una cuenta personal de Gmail. Las cuentas institucionales no presentan limitaciones de almacenamiento en Google Drive, lo cual es importante al momento de exportar resultados geoespaciales, que suelen ser archivos de gran tamaño.
+</Note>
+
+## Ambientes de Desarrollo
+
+Earth Engine ofrece múltiples formas de acceso según tu flujo de trabajo preferido. Puedes usarlo de forma interactiva en la web mediante el Explorer, o bien acceder a su API (Interfaz de Programación de Aplicaciones) a través de distintos lenguajes de programación.
+
+<Tabs>
+  <Tab title="JavaScript (Code Editor)">
+    El **Code Editor** es un IDE (Entorno de Desarrollo Integrado) desarrollado directamente en la web. No requiere instalación y ofrece:
+
+    - Una ventana de visualización de mapas integrada para inspeccionar resultados de forma inmediata.
+    - Widgets para dibujar y editar figuras geométricas (puntos, líneas, polígonos).
+    - Acceso completo al catálogo de datos de Earth Engine.
+    - Un panel de tareas (_Tasks_) para exportar resultados a Google Drive o Google Cloud Storage.
+
+    Es el ambiente recomendado para quienes se inician en la plataforma. Puedes consultar la guía oficial en: [Get Started with Earth Engine](https://developers.google.com/earth-engine/guides/getstarted).
+  </Tab>
+  <Tab title="Python (earthengine-api)">
+    Mediante el paquete `earthengine-api` es posible acceder a la API de Earth Engine desde Python. Este ambiente es ideal para flujos de trabajo más complejos y automatizados.
+
+    - Compatible con scripts `.py` y libretas Jupyter Notebooks (`.ipynb`).
+    - Permite integrar el procesamiento de GEE con otras librerías del ecosistema científico de Python: `numpy`, `pandas`, `matplotlib`, `geopandas`.
+    - Requiere autenticación previa mediante `ee.Authenticate()`.
+
+    Consulta la guía de instalación en: [Instalación de la API de Python](https://developers.google.com/earth-engine/guides/python_install).
+  </Tab>
+  <Tab title="R (rgee)">
+    El paquete `rgee` permite acceder a la API de Earth Engine desde R, aprovechando la librería `reticulate` para conectar el ambiente de R con la API de Python de Earth Engine.
+
+    - Especialmente útil si tu flujo de análisis estadístico ya está establecido en R.
+    - Permite combinar el poder de procesamiento de GEE con las capacidades estadísticas y gráficas de R.
+    - Documentación y ejemplos disponibles en: [Google Earth Engine for R](https://r-spatial.github.io/rgee/).
+  </Tab>
+  <Tab title="QGIS Plugin">
+    Existe un plugin de la comunidad que integra Google Earth Engine directamente en QGIS, permitiendo cargar y visualizar datos de la plataforma sin salir del entorno SIG de escritorio.
+
+    - Facilita la combinación de capas locales con datos de GEE en un mismo proyecto.
+    - Instalable desde el repositorio de plugins de QGIS.
+    - Más información en: [Integrates Google Earth Engine and QGIS using Python API](https://gee-community.github.io/qgis-earthengine-plugin/).
+  </Tab>
+</Tabs>
+
+## Earth Engine Apps
+
+Earth Engine Apps es una funcionalidad que permite construir y publicar interfaces gráficas dinámicas e interactivas directamente desde el Code Editor, sin necesidad de infraestructura adicional. Estas aplicaciones pueden compartirse de manera pública o privada con otros usuarios.
+
+Un ejemplo destacado es la aplicación [Monitoreo de la Dinámica Agrícola](https://minagri-geoespacial.users.earthengine.app/view/dinamicaagricolav3), desarrollada por el **MIDAGRI** (Ministerio de Desarrollo Agrario y Riego del Perú), que clasifica cultivos transitorios, permanentes y en descanso a nivel departamental.
+
+<Tip>
+  Para explorar una galería de aplicaciones creadas por usuarios de Earth Engine, revisa la recopilación de Philipp Gärtner: [Google Earth Engine Apps - Updated 23th December 2020](https://philippgaertner.github.io/2020/12/ee-apps-table-searchable/). La documentación oficial sobre cómo crear tus propias apps está disponible en [Apps and User Interfaces](https://developers.google.com/earth-engine/guides/apps).
+</Tip>
+
+## Ejemplos de Uso
+
+Gracias a la base de datos bien estructurada de GEE y al procesamiento en la nube, es posible obtener visualizaciones y resultados en cuestión de segundos. A continuación se presentan ejemplos básicos de uso en JavaScript y Python.
+
+<CodeGroup>
+```javascript JavaScript — NDVI con Sentinel-2
+// Cargar una colección de imágenes Sentinel-2
+var s2 = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(ee.Geometry.Point([-75.0, -13.0]))  // Coordenadas en Perú
+  .filterDate('2023-06-01', '2023-08-31')
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10))
+  .median();
+
+// Calcular el NDVI
+var ndvi = s2.normalizedDifference(['B8', 'B4']).rename('NDVI');
+
+// Parámetros de visualización
+var ndviVis = {
+  min: -0.2,
+  max: 0.8,
+  palette: ['#d73027', '#fee08b', '#1a9850']
+};
+
+// Añadir la capa al mapa
+Map.centerObject(ndvi, 10);
+Map.addLayer(ndvi, ndviVis, 'NDVI Sentinel-2');
+```
+
+```python Python — Autenticación y carga de colección
+import ee
+
+# Autenticación (solo la primera vez)
+ee.Authenticate()
+
+# Inicializar la API
+ee.Initialize(project='mi-proyecto-gee')
+
+# Definir área de interés
+aoi = ee.Geometry.Rectangle([-76.5, -14.5, -74.5, -12.5])
+
+# Cargar y filtrar una colección de imágenes Landsat 8
+landsat = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+  .filterBounds(aoi)
+  .filterDate('2023-01-01', '2023-12-31')
+  .filter(ee.Filter.lt('CLOUD_COVER', 20))
+  .median())
+
+# Obtener información de la imagen compuesta
+print('Bandas disponibles:', landsat.bandNames().getInfo())
+```
+</CodeGroup>
+
+## Conclusiones
+
+Google Earth Engine ha democratizado el acceso al análisis geoespacial a escala planetaria. Su combinación de un catálogo de datos histórico de más de cuarenta años, procesamiento en la nube y APIs accesibles desde JavaScript, Python y R lo posiciona como la plataforma de referencia para investigadores en agricultura de precisión, teledetección y ciencias ambientales. La posibilidad de publicar aplicaciones interactivas amplía aún más su alcance, permitiendo que los resultados de investigación lleguen directamente a tomadores de decisiones como el MIDAGRI.
+
+## Referencias
+
+**Artículo científico**
+
+- Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., & Moore, R. (2017). Google Earth Engine: Planetary-scale geospatial analysis for everyone. *Remote Sensing of Environment*, 202, 18–27. [https://doi.org/10.1016/j.rse.2017.06.031](http://dx.doi.org/10.1016/j.rse.2017.06.031)
+
+**Sitios web**
+
+- Google Earth Engine — Portal: [https://earthengine.google.com/](https://earthengine.google.com/)
+- Google Earth Engine — Registro: [https://earthengine.google.com/signup/](https://earthengine.google.com/signup/)
+- Google Earth Engine — Preguntas frecuentes (FAQ): [https://earthengine.google.com/faq/](https://earthengine.google.com/faq/)
+- Google Earth Engine — Documentación: [https://developers.google.com/earth-engine/](https://developers.google.com/earth-engine/)
+- JavaScript — Get Started with Earth Engine: [https://developers.google.com/earth-engine/guides/getstarted](https://developers.google.com/earth-engine/guides/getstarted)
+- Python — Instalación de la API: [https://developers.google.com/earth-engine/guides/python_install](https://developers.google.com/earth-engine/guides/python_install)
+- R — Google Earth Engine for R (rgee): [https://r-spatial.github.io/rgee/](https://r-spatial.github.io/rgee/)
+- QGIS Plugin — gee-community: [https://gee-community.github.io/qgis-earthengine-plugin/](https://gee-community.github.io/qgis-earthengine-plugin/)
+- Google Earth Engine API — Repositorio GitHub: [https://github.com/google/earthengine-api](https://github.com/google/earthengine-api)
+- Google Earth Engine — Referencia de la API: [https://developers.google.com/earth-engine/apidocs](https://developers.google.com/earth-engine/apidocs)
+- Google Earth Engine — Guías: [https://developers.google.com/earth-engine/guides](https://developers.google.com/earth-engine/guides)
+- Google Earth Engine — Tutoriales: [https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api-guiattard](https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api-guiattard)

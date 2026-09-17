@@ -1,0 +1,382 @@
+---
+title: "Visualizaciones Científicas con Python para Investigación Agrícola"
+sidebarTitle: "Visualizaciones"
+description: "Aprende a crear gráficas científicas de calidad publicación con Python usando Matplotlib, Seaborn, Plotly y geemap para investigación agrícola."
+---
+
+La visualización científica es uno de los pilares de la comunicación en investigación: una figura bien construida transmite en segundos lo que párrafos enteros no logran explicar. Python se ha consolidado como la plataforma de referencia para este trabajo, gracias a un ecosistema de librerías que cubre desde gráficos estáticos listos para publicación hasta dashboards interactivos integrables en aplicaciones web. En investigación agrícola y de teledetección, esto se traduce en curvas de absorción de nutrientes, series temporales meteorológicas, resultados de modelos estadísticos complejos e incluso animaciones de imágenes satelitales, todo generado con código reproducible y ajustable al detalle.
+
+## Eligiendo la librería adecuada
+
+La elección de la librería depende principalmente de si el gráfico final será estático (para publicaciones, informes o tesis) o interactivo (para aplicaciones, dashboards o exploración de datos en la web). A continuación se presenta un resumen comparativo de las principales opciones disponibles en Python:
+
+| Librería | Tipo | Descripción | Ideal para |
+|---|---|---|---|
+| **Matplotlib** | Estático | La librería base. Control total sobre cada elemento de la figura. | Artículos, tesis, figuras de precisión |
+| **Seaborn** | Estático | Construida sobre Matplotlib. Simplifica visualizaciones estadísticas complejas. | Boxplots, heatmaps, distribuciones |
+| **Pandas** | Estático | Gráficas rápidas desde un DataFrame usando Matplotlib internamente. | Exploración inicial de datos |
+| **Plotly** | Interactivo | Gráficas interactivas con hover, zoom y filtros. | Dashboards, series temporales web |
+| **Bokeh** | Interactivo | Orientado a aplicaciones web con integración de JavaScript. | Aplicaciones interactivas complejas |
+| **geemap** | Interactivo / Estático | Visualización de imágenes satelitales de Google Earth Engine. | Teledetección, mapas, GIFs satelitales |
+
+<Tip>
+Si ya realizaste el análisis estadístico en R, exporta los resultados a `.csv` para graficarlos en Python. Esto te permite mantener el flujo de análisis en R y aprovechar el control tipográfico de Matplotlib para las figuras finales.
+</Tip>
+
+## Ejemplos por tipo de gráfica
+
+Los siguientes ejemplos provienen de investigaciones reales en agricultura, edafología y teledetección. Cada sección incluye el contexto de uso y código representativo.
+
+<AccordionGroup>
+
+<Accordion title="Curvas de absorción de nutrientes (ajuste sigmoide NPK)">
+
+Las curvas de absorción de nutrientes permiten modelar la demanda acumulada de NPK a lo largo del ciclo de un cultivo. A partir de datos medidos en campo —en dos variedades de ajo y cebolla a distintas fechas— se ajustó una función sigmoide (curva S) que representa el patrón de absorción. Esta figura fue desarrollada para el [Manual de Fertilización del INIA](http://hdl.handle.net/20.500.12955/2836), donde las áreas sombreadas representan las cantidades requeridas de cada nutriente diferenciadas por variedad.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+
+# Función sigmoide (logística de 4 parámetros)
+def sigmoide(x, L, k, x0, b):
+    return L / (1 + np.exp(-k * (x - x0))) + b
+
+# Datos de ejemplo: días después del trasplante (DDT) y absorción de N (kg/ha)
+ddt   = np.array([0, 15, 30, 45, 60, 75, 90, 105, 120])
+n_var1 = np.array([0, 5, 18, 45, 90, 130, 155, 168, 172])
+n_var2 = np.array([0, 4, 14, 38, 78, 115, 138, 148, 152])
+
+dias = np.linspace(0, 120, 300)
+
+# Ajuste sigmoide para cada variedad
+popt1, _ = curve_fit(sigmoide, ddt, n_var1, p0=[172, 0.08, 60, 0], maxfev=5000)
+popt2, _ = curve_fit(sigmoide, ddt, n_var2, p0=[152, 0.08, 60, 0], maxfev=5000)
+
+curva1 = sigmoide(dias, *popt1)
+curva2 = sigmoide(dias, *popt2)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.plot(dias, curva1, color="#2c7bb6", lw=2, label="Variedad A")
+ax.fill_between(dias, curva2, curva1, alpha=0.25, color="#2c7bb6",
+                label="Diferencia entre variedades")
+ax.plot(dias, curva2, color="#d7191c", lw=2, label="Variedad B")
+
+ax.scatter(ddt, n_var1, color="#2c7bb6", zorder=5)
+ax.scatter(ddt, n_var2, color="#d7191c", zorder=5)
+
+ax.set_xlabel("Días después del trasplante (DDT)", fontsize=11)
+ax.set_ylabel("Absorción de N (kg ha⁻¹)", fontsize=11)
+ax.set_title("Curvas de absorción de Nitrógeno (N) — Ajo", fontsize=12, fontweight="bold")
+ax.legend(frameon=False)
+ax.spines[["top", "right"]].set_visible(False)
+
+plt.tight_layout()
+plt.savefig("curvas_npk.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+</Accordion>
+
+<Accordion title="Datos meteorológicos (temperatura, precipitación, ET)">
+
+En investigaciones de eficiencia de riego y uso de coberturas en cultivos de rocoto y ají, se requirió representar en un único gráfico las series temporales de temperatura máxima, mínima y media, precipitación y evapotranspiración potencial (ETo). Los datos de ETo faltantes fueron completados con la librería `pyet`. Una figura de este estilo fue publicada en [Poma-Chamana et al., 2025](https://doi.org/10.3389/fagro.2025.1663633).
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
+# Cargar datos desde CSV (columnas: fecha, tmax, tmin, tmean, pp, eto)
+df = pd.read_csv("datos_meteorologicos.csv", parse_dates=["fecha"])
+
+fig = plt.figure(figsize=(12, 6))
+gs  = gridspec.GridSpec(2, 1, height_ratios=[2, 1], hspace=0.05)
+
+# Panel superior: temperaturas y ETo
+ax1 = fig.add_subplot(gs[0])
+ax2 = ax1.twinx()
+
+ax1.fill_between(df["fecha"], df["tmin"], df["tmax"],
+                 alpha=0.2, color="#f4a582", label="Rango T (°C)")
+ax1.plot(df["fecha"], df["tmean"], color="#d6604d", lw=1.5, label="T media (°C)")
+ax2.plot(df["fecha"], df["eto"],   color="#4393c3", lw=1.5,
+         linestyle="--", label="ETo (mm/día)")
+
+ax1.set_ylabel("Temperatura (°C)", color="#d6604d", fontsize=10)
+ax2.set_ylabel("ETo (mm día⁻¹)",   color="#4393c3", fontsize=10)
+ax1.set_xticklabels([])
+
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.legend(lines1 + lines2, labels1 + labels2, frameon=False, fontsize=9)
+
+# Panel inferior: precipitación
+ax3 = fig.add_subplot(gs[1], sharex=ax1)
+ax3.bar(df["fecha"], df["pp"], color="#92c5de", width=1, label="Precipitación (mm)")
+ax3.set_ylabel("PP (mm)", fontsize=10)
+ax3.set_xlabel("Fecha", fontsize=10)
+ax3.legend(frameon=False, fontsize=9)
+
+for ax in [ax1, ax2, ax3]:
+    ax.spines[["top", "right"]].set_visible(False)
+
+plt.savefig("datos_meteo.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+</Accordion>
+
+<Accordion title="Modelos GLMM — Clorofila y Altura">
+
+A partir del análisis de modelos lineales generalizados mixtos (GLMM), se modelaron las curvas temporales de clorofila (SPAD) y altura en el cultivo de ají. Las gráficas muestran los valores ajustados por el modelo junto con los intervalos de confianza, diferenciados por tratamiento. Estas figuras fueron desarrolladas para un artículo científico sometido que extiende el trabajo publicado en [Poma-Chamana et al., 2025](https://doi.org/10.3389/fagro.2025.1663633).
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Datos simulados representativos de salida GLMM
+# ddt: días después del trasplante
+ddt = np.array([14, 28, 42, 56, 70, 84, 98, 112])
+
+tratamientos = {
+    "T1 (100% ETc)":    {"media": [28, 35, 42, 50, 54, 57, 58, 58], "ic": 2.5},
+    "T2 (75% ETc)":     {"media": [26, 32, 38, 45, 49, 52, 53, 53], "ic": 2.8},
+    "T3 (50% ETc)":     {"media": [22, 28, 33, 40, 43, 46, 47, 47], "ic": 3.1},
+}
+
+colores = ["#1b7837", "#762a83", "#e08214"]
+fig, ax = plt.subplots(figsize=(8, 5))
+
+for (nombre, datos), color in zip(tratamientos.items(), colores):
+    media = np.array(datos["media"])
+    ic    = datos["ic"]
+    ax.plot(ddt, media, "o-", color=color, lw=2, label=nombre)
+    ax.fill_between(ddt, media - ic, media + ic, alpha=0.15, color=color)
+
+ax.set_xlabel("Días después del trasplante (DDT)", fontsize=11)
+ax.set_ylabel("Índice SPAD (Clorofila relativa)", fontsize=11)
+ax.set_title("Curvas GLMM — Clorofila en ají por tratamiento de riego",
+             fontsize=11, fontweight="bold")
+ax.legend(frameon=False, fontsize=9)
+ax.spines[["top", "right"]].set_visible(False)
+
+plt.tight_layout()
+plt.savefig("glmm_spad.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+</Accordion>
+
+<Accordion title="Gráficas de barras con diferencias significativas">
+
+Para representar el carbono orgánico del suelo (SOC) y la materia seca en investigaciones sobre el cultivo de ají, se elaboraron gráficas de barras en dos formatos: comparación de tratamientos y comparación de tipos de materia seca. Las letras de diferencias significativas fueron obtenidas mediante el test post-hoc de Dunn y se añadieron manualmente sobre cada barra.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+tratamientos  = ["T1\n(Mulch)", "T2\n(Cobertura)", "T3\n(Sin cobertura)", "T4\n(Control)"]
+medias_soc    = [1.82, 1.65, 1.41, 1.28]
+errores_soc   = [0.12, 0.10, 0.09, 0.11]
+letras_sig    = ["a", "a", "b", "b"]      # Test de Dunn (p < 0.05)
+
+x   = np.arange(len(tratamientos))
+fig, ax = plt.subplots(figsize=(7, 5))
+
+barras = ax.bar(x, medias_soc, yerr=errores_soc, capsize=5,
+                color=["#4d9221", "#7fbc41", "#b8e186", "#e6f5d0"],
+                edgecolor="black", linewidth=0.8, error_kw={"elinewidth": 1.2})
+
+# Añadir letras de diferencias significativas
+for barra, letra in zip(barras, letras_sig):
+    altura = barra.get_height()
+    ax.text(barra.get_x() + barra.get_width() / 2,
+            altura + 0.06, letra, ha="center", va="bottom",
+            fontsize=12, fontweight="bold", color="#333333")
+
+ax.set_xticks(x)
+ax.set_xticklabels(tratamientos, fontsize=10)
+ax.set_ylabel("Carbono Orgánico del Suelo — SOC (%)", fontsize=10)
+ax.set_title("SOC por tratamiento de cobertura — Cultivo de ají", fontsize=11)
+ax.set_ylim(0, 2.3)
+ax.spines[["top", "right"]].set_visible(False)
+
+plt.tight_layout()
+plt.savefig("barplot_soc.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+</Accordion>
+
+<Accordion title="Boxplots — Estrés hídrico y variables de campo">
+
+Los boxplots permiten visualizar la distribución y variabilidad de datos medidos en múltiples fechas o condiciones. Para un artículo sobre el índice de estrés hídrico en el cultivo de maíz en Lambayeque ([Cruz-Grimaldo et al., 2025](https://doi.org/10.4995/raet.2026.23671)), se representó la variación del CWSI (Crop Water Stress Index) a lo largo de las etapas vegetativa y reproductiva para cuatro tratamientos de riego.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Cargar datos: columnas 'etapa', 'tratamiento', 'cwsi'
+df = pd.read_csv("datos_cwsi_maiz.csv")
+
+orden_etapas = ["V6", "V12", "VT", "R1", "R3", "R6"]
+paleta = {"T1": "#2166ac", "T2": "#92c5de", "T3": "#f4a582", "T4": "#d6604d"}
+
+fig, ax = plt.subplots(figsize=(10, 5))
+
+sns.boxplot(
+    data=df, x="etapa", y="cwsi", hue="tratamiento",
+    order=orden_etapas, palette=paleta,
+    linewidth=0.8, flierprops={"marker": "o", "markersize": 3},
+    ax=ax
+)
+
+ax.axhline(0.5, color="gray", linestyle="--", lw=1, label="Umbral estrés moderado")
+ax.set_xlabel("Etapa fenológica", fontsize=11)
+ax.set_ylabel("CWSI (Índice de estrés hídrico)", fontsize=11)
+ax.set_title("Variación del CWSI en maíz — Lambayeque, 2023", fontsize=11)
+ax.legend(frameon=False, fontsize=9, title="Tratamiento")
+ax.spines[["top", "right"]].set_visible(False)
+
+plt.tight_layout()
+plt.savefig("boxplot_cwsi.png", dpi=300, bbox_inches="tight")
+plt.show()
+```
+
+</Accordion>
+
+<Accordion title="Gráficos interactivos con Plotly">
+
+Con Plotly se elaboró una visualización interactiva de la serie temporal de temperatura de la estación meteorológica de Tinajones (Lambayeque), útil para identificar la hora de paso del satélite Landsat y corregir los datos de temperatura superficial en el modelo METRIC. Plotly permite hacer hover sobre los puntos, hacer zoom y filtrar series por leyenda, lo que facilita la exploración de datos extensos.
+
+```python
+import pandas as pd
+import plotly.graph_objects as go
+
+# Cargar serie temporal de temperatura horaria
+df = pd.read_csv("temperatura_tinajones.csv", parse_dates=["fecha_hora"])
+
+# Filtrar horas de interés: 11am (paso Landsat) y 3pm (referencia)
+df_11 = df[df["fecha_hora"].dt.hour == 11].copy()
+df_15 = df[df["fecha_hora"].dt.hour == 15].copy()
+
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(
+    x=df_11["fecha_hora"], y=df_11["temperatura_c"],
+    mode="lines+markers", name="11:00 am (paso Landsat)",
+    line={"color": "#d6604d", "width": 1.5},
+    marker={"size": 4},
+    hovertemplate="<b>%{x|%d %b %Y}</b><br>T = %{y:.1f} °C<extra></extra>"
+))
+
+fig.add_trace(go.Scatter(
+    x=df_15["fecha_hora"], y=df_15["temperatura_c"],
+    mode="lines", name="15:00 pm (referencia)",
+    line={"color": "#4393c3", "width": 1.5, "dash": "dot"},
+    hovertemplate="<b>%{x|%d %b %Y}</b><br>T = %{y:.1f} °C<extra></extra>"
+))
+
+fig.update_layout(
+    title="Temperatura horaria — Estación Tinajones (Lambayeque)",
+    xaxis_title="Fecha",
+    yaxis_title="Temperatura (°C)",
+    legend={"orientation": "h", "yanchor": "bottom", "y": 1.02},
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+    hovermode="x unified",
+    xaxis={"showgrid": True, "gridcolor": "#eeeeee"},
+    yaxis={"showgrid": True, "gridcolor": "#eeeeee"},
+)
+
+fig.write_html("temperatura_tinajones.html")
+fig.show()
+```
+
+<Note>
+Plotly requiere conocimiento básico de programación web para su correcta integración en aplicaciones o sitios externos. Para uso en Jupyter Notebooks, no es necesaria configuración adicional.
+</Note>
+
+</Accordion>
+
+<Accordion title="Imágenes satelitales con geemap (GIFs Landsat/Sentinel-2)">
+
+Con la librería `geemap`, que es un wrapper de Python para Google Earth Engine, se generaron animaciones GIF que muestran la variación temporal y espacial de los arrozales en Lambayeque usando imágenes Landsat 9 y Sentinel-2. Además, se identificaron los píxeles de "frío" y "calor" necesarios para la calibración interna del modelo METRIC, filtrando por NDVI y temperatura superficial.
+
+```python
+import ee
+import geemap
+
+# Autenticar y inicializar Google Earth Engine
+ee.Authenticate()
+ee.Initialize(project="mi-proyecto-gee")
+
+# Definir área de interés (Lambayeque, Perú)
+aoi = ee.Geometry.Rectangle([-80.2, -6.9, -79.7, -6.4])
+
+# Colección Sentinel-2 TOA — periodo de campaña agrícola
+coleccion = (
+    ee.ImageCollection("COPERNICUS/S2_TOA")
+    .filterBounds(aoi)
+    .filterDate("2021-01-01", "2023-12-31")
+    .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 15))
+    .select(["B4", "B3", "B2"])          # Composición RGB color natural
+)
+
+# Parámetros de visualización
+vis_params = {
+    "min": 0, "max": 3000,
+    "bands": ["B4", "B3", "B2"],
+    "gamma": 1.3
+}
+
+# Generar GIF animado
+Map = geemap.Map()
+Map.add_time_slider(coleccion, vis_params, time_interval=0.5)
+
+# Exportar GIF
+geemap.download_ee_video(
+    collection=coleccion,
+    video_args={**vis_params, "dimensions": 512, "framesPerSecond": 3},
+    filename="sentinel2_lambayeque.gif",
+    region=aoi
+)
+
+Map
+```
+
+<Info>
+Para ejecutar el código de `geemap` necesitas una cuenta de Google Earth Engine activa. Puedes solicitar acceso gratuito en [earthengine.google.com](https://earthengine.google.com/). La primera ejecución requiere autenticación desde el navegador.
+</Info>
+
+</Accordion>
+
+</AccordionGroup>
+
+## Conclusiones
+
+Python, a pesar de ser un lenguaje con años de madurez, sigue siendo una alternativa sólida para la elaboración de figuras de calidad publicación en investigación científica. La posibilidad de ajustar cada detalle —desde el grosor de una línea hasta la posición exacta de una letra de significancia estadística— lo convierte en una herramienta insustituible cuando se busca consistencia visual entre figuras de un mismo artículo o tesis. Al mismo tiempo, librerías como Plotly y geemap amplían ese universo hacia la visualización interactiva y el análisis espacial, haciendo de Python una plataforma completa para la comunicación científica moderna.
+
+## Referencias
+
+<CardGroup cols={2}>
+  <Card title="Matplotlib" icon="chart-line" href="https://matplotlib.org/">
+    Documentación oficial de Matplotlib: Visualization with Python
+  </Card>
+  <Card title="Plotly Python" icon="chart-bar" href="https://plotly.com/python/">
+    Librería de gráficos interactivos de código abierto para Python
+  </Card>
+  <Card title="Seaborn" icon="palette" href="https://seaborn.pydata.org/">
+    Statistical data visualization basada en Matplotlib
+  </Card>
+  <Card title="geemap" icon="globe" href="https://geemap.org/">
+    Paquete Python para análisis y visualización interactiva con Google Earth Engine
+  </Card>
+</CardGroup>
+
+- Practical Business Python — [Choosing a Python Visualization Tool](https://pbpython.com/python-vis-flowchart.html)
+- Poma-Chamana et al. (2025). *Frontiers in Agronomy*. [https://doi.org/10.3389/fagro.2025.1663633](https://doi.org/10.3389/fagro.2025.1663633)
+- Cruz-Grimaldo et al. (2025). *Revista de Teledetección*. [https://doi.org/10.4995/raet.2026.23671](https://doi.org/10.4995/raet.2026.23671)

@@ -1,0 +1,124 @@
+---
+title: "Computer Vision en la Agricultura: Automatización Visual del Campo"
+sidebarTitle: "Computer Vision"
+description: "Descubre cómo la visión por computadora y la IA automatizan el monitoreo agrícola, desde el conteo de frutos hasta la detección de plagas."
+---
+
+La agricultura moderna se encuentra en una encrucijada donde la eficiencia y la precisión ya no son opcionales, sino necesarias para hacer frente a la demanda alimentaria global y a los desafíos del cambio climático. En este contexto, la capacidad de "ver" y "entender" el entorno de forma automatizada está revolucionando la manera en que gestionamos los cultivos. La Visión por Computadora (*Computer Vision*) es, en esencia, el "ojo de la Inteligencia Artificial": permite que las máquinas observen, analicen e interpreten imágenes con una velocidad y consistencia imposibles para el observador humano, abriendo la puerta a un monitoreo agrícola masivo, continuo y de alta precisión.
+
+## ¿Qué es Computer Vision?
+
+La visión por computadora es un campo de la Inteligencia Artificial (IA) que permite a los sistemas obtener información significativa a partir de imágenes digitales, videos y otras entradas visuales, y tomar decisiones o generar recomendaciones basadas en esa información.
+
+**IBM** ofrece una de las definiciones más citadas:
+
+> "La visión por computadora es un campo de inteligencia artificial (IA) que permite que las computadoras y los sistemas obtengan información significativa de imágenes digitales, videos y otras entradas visuales, y tomen acciones o hagan recomendaciones basadas en esa información. Si la IA permite que las computadoras piensen, la visión por computadora les permite ver, observar y comprender."
+
+A diferencia del ojo humano, que se apoya en décadas de experiencia contextual para distinguir objetos, distancias y estados, las máquinas deben ser entrenadas mediante cámaras, grandes conjuntos de datos y algoritmos complejos. Sin embargo, una vez capacitado, un sistema de visión por computadora puede **procesar miles de imágenes por minuto**, detectando anomalías imperceptibles para el observador humano.
+
+Por su parte, **Sushant Kumar Jha** complementa esta visión en Medium:
+
+> "Los seres humanos usan sus ojos y su cerebro para ver y sentir visualmente el mundo que los rodea. La visión por computadora es la ciencia que tiene como objetivo brindar una capacidad similar, si no mejor, a una máquina o computadora. Se ocupa de la extracción, el análisis y la comprensión automática de información útil y significativa."
+
+Esta capacidad de otorgar "sentido visual" a las máquinas es lo que permite hoy automatizar procesos que antes dependían exclusivamente de la inspección manual y subjetiva.
+
+## ¿Qué procesos puede automatizar?
+
+Para entender el potencial de esta tecnología en el campo, la pregunta clave es: **¿qué proceso repetitivo que dependa de la vista puede ser automatizado?** En la agricultura, la respuesta abarca una amplia variedad de tareas de monitoreo y gestión:
+
+<CardGroup cols={2}>
+  <Card title="Conteo de frutos" icon="circle-nodes">
+    Estimación del número de frutos por planta o por hectárea antes de la cosecha, permitiendo planificar la logística de recolección y proyectar el rendimiento del campo con semanas de anticipación.
+  </Card>
+  <Card title="Detección de enfermedades y plagas" icon="bug">
+    Identificación temprana de hojas, tallos o frutos afectados por hongos, bacterias o insectos mediante el análisis de patrones de color, textura y forma en imágenes de campo o dron.
+  </Card>
+  <Card title="Análisis fenológico" icon="seedling">
+    Determinación del estado de desarrollo de los cultivos (germinación, floración, fructificación, maduración) para optimizar la aplicación de insumos y la programación de riegos según la etapa del ciclo.
+  </Card>
+  <Card title="Detección de malezas" icon="leaf">
+    Diferenciación automatizada entre cultivos y malezas para una aplicación de herbicidas sitio-específica, reduciendo el uso de agroquímicos y los costos operativos.
+  </Card>
+</CardGroup>
+
+<Info>
+  La clave para implementar cualquiera de estas aplicaciones es contar con un conjunto de imágenes de entrenamiento correctamente etiquetadas (*anotadas*). La calidad y diversidad de este conjunto de datos determina en gran medida la precisión del modelo resultante.
+</Info>
+
+## Caso de Éxito — Bitwise Agronomy
+
+Un ejemplo destacado de la aplicación práctica de Computer Vision en la agricultura de exportación es el trabajo de **Bitwise Agronomy**, una empresa especializada en soluciones de IA para el sector agrícola.
+
+En colaboración con la startup **SpaceAG**, Bitwise Agronomy utiliza modelos de *Machine Learning* entrenados en la nube para abordar dos desafíos específicos en cultivos de agroexportación:
+
+<Steps>
+  <Step title="Conteo masivo de frutos">
+    Mediante el análisis de imágenes tomadas en campo (con smartphones o cámaras de dron), los modelos detectan y cuentan frutos individuales en tiempo real, eliminando el laborioso conteo manual y permitiendo estimaciones de rendimiento a escala comercial.
+  </Step>
+  <Step title="Análisis de estados fenológicos">
+    Los algoritmos identifican el estado de desarrollo de flores y frutos, clasificándolos en categorías específicas (yema floral, flor abierta, cuajado, fruto en desarrollo, madurez) para optimizar las decisiones de manejo agronómico.
+  </Step>
+  <Step title="Aplicación en arándanos de exportación">
+    Un caso concreto es la identificación de flores de arándano (*Vaccinium corymbosum*) en distintos estados de apertura. El sistema distingue flores individuales incluso en condiciones de densidad alta de follaje, con una precisión que supera la inspección visual manual.
+  </Step>
+</Steps>
+
+<Note>
+  Para conocer más sobre el trabajo de Bitwise Agronomy, puedes visitar su sitio web en [https://www.bitwiseag.com/](https://www.bitwiseag.com/) o explorar su perfil en [LinkedIn](https://www.linkedin.com/company/bitwise-agronomy/), donde comparten actualizaciones sobre sus proyectos e investigaciones.
+</Note>
+
+## Python y JavaScript en Computer Vision Agrícola
+
+La integración de lenguajes de programación accesibles como **Python** y **JavaScript** en plataformas como Google Earth Engine está democratizando el acceso a las capacidades de Computer Vision para investigadores y productores que no cuentan con grandes presupuestos de infraestructura tecnológica.
+
+Python, con su ecosistema de librerías especializadas, ofrece las herramientas más completas para el desarrollo de modelos de visión:
+
+```python
+# Ejemplo: clasificación de imágenes con PyTorch y torchvision
+import torch
+import torchvision.transforms as transforms
+from torchvision import models
+from PIL import Image
+
+# Cargar un modelo preentrenado (ResNet50)
+model = models.resnet50(pretrained=True)
+model.eval()
+
+# Preprocesar una imagen de campo
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
+
+# Cargar y transformar imagen
+img = Image.open("campo_arandano.jpg")
+img_tensor = transform(img).unsqueeze(0)
+
+# Inferencia
+with torch.no_grad():
+    output = model(img_tensor)
+    _, predicted = torch.max(output, 1)
+
+print(f"Clase predicha: {predicted.item()}")
+```
+
+Frameworks como **TensorFlow**, **PyTorch** y **OpenCV** permiten construir pipelines completos de detección de objetos (YOLO, Faster R-CNN) y segmentación semántica aplicados directamente a imágenes de campo o satelitales.
+
+## Conclusiones
+
+La Visión por Computadora no es solo una herramienta de visualización; es un puente entre el mundo biológico y el análisis de datos masivos (*Big Data*). En la agricultura, su implementación permite pasar de una gestión generalizada a una **agricultura de precisión**, donde cada planta puede ser monitoreada y atendida de forma individual y oportuna.
+
+Aunque el reto de entrenar modelos precisos para entornos variables —como campos con condiciones de iluminación cambiante o follaje denso— sigue presente, la integración de Python y JavaScript en plataformas como Google Earth Engine está poniendo estas capacidades analíticas al alcance de investigadores y productores de todo el mundo.
+
+## Referencias
+
+1. IBM — What is Computer Vision?: [https://www.ibm.com/topics/computer-vision](https://www.ibm.com/topics/computer-vision)
+2. Sushant Kumar Jha — Computer Vision In Agriculture (Medium): [https://medium.com/@sushantjha8/computer-vision-in-agriculture-4cc7b021fefb](https://medium.com/@sushantjha8/computer-vision-in-agriculture-4cc7b021fefb)
+3. Sushant Kumar Jha — How Artificial Intelligence is helping into photogrammetry? (Medium): [https://medium.com/@sushantjha8/how-artificial-intelligence-can-help-in-photogrammetry-with-drones-95046a4c8fd4](https://medium.com/@sushantjha8/how-artificial-intelligence-can-help-in-photogrammetry-with-drones-95046a4c8fd4)
+4. Bitwise Agronomy: [https://www.bitwiseag.com/](https://www.bitwiseag.com/)
+5. Bitwise Agronomy en LinkedIn: [https://www.linkedin.com/company/bitwise-agronomy/](https://www.linkedin.com/company/bitwise-agronomy/)

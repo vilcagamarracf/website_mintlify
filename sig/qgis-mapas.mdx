@@ -1,0 +1,73 @@
+---
+title: "Elaboración de Mapas Científicos con QGIS para Investigación"
+sidebarTitle: "Mapas con QGIS"
+description: "Crea mapas de ubicación y temáticos con QGIS para artículos científicos, con ejemplos de interpolación Kriging, IDW y análisis LISA."
+---
+
+QGIS es un software de Sistemas de Información Geográfica (SIG) de código abierto que permite realizar análisis espacial y representar datos de forma gráfica con calidad de publicación. En investigación científica, su papel es fundamental: proporciona los medios para comunicar visualmente dónde y cómo ocurren los fenómenos estudiados, desde la ubicación de parcelas experimentales hasta la distribución espacial de propiedades del suelo interpoladas. Los mapas elaborados en QGIS han aparecido en revistas indexadas de alto impacto como *Frontiers in Soil Science* y *Frontiers in Agronomy*, siendo una herramienta imprescindible para cualquier investigador en agronomía, ciencias del suelo y afines.
+
+## Tipos de Mapas
+
+En investigación agrícola y de suelos, los mapas cumplen dos funciones principales: ubicar espacialmente el área de estudio para el lector, y representar la variabilidad de propiedades o fenómenos de interés mediante colores, gradientes o símbolos.
+
+<Accordion title="Mapas de ubicación">
+  Los mapas de ubicación sirven para contextualizar geográficamente el área de estudio dentro de una publicación científica. Muestran la posición de zonas de muestreo, parcelas experimentales o cuencas hidrográficas en relación con unidades administrativas o accidentes geográficos reconocibles.
+
+  **Ejemplos elaborados en QGIS para publicaciones científicas:**
+
+  - **Valle del Tambo, Islay, Arequipa** — Zonas de muestreo de suelo presentadas en [Poma et al. (2025)](https://doi.org/10.3389/fsoil.2025.1706974), en el contexto de estimación y mapeo del índice de fertilidad del suelo mediante Kriging de regresión.
+  - **Bella Unión, Caravelí, Arequipa** — Zonas de muestreo en cultivos de olivo presentadas en [Poma et al. (2026)](https://doi.org/10.3389/fsoil.2026.1724235), para el análisis de calidad de suelo en olivares del sur del Perú.
+  - **Distrito de Santa Rita** — Mapa de zonas de muestreo de suelos en áreas agrícolas para evaluaciones de fertilidad.
+  - **Cuenca Ocoña** — Mapa de ubicación con dos zonas de estudio diferenciadas: valle interandino y valle costero, para investigaciones en cuencas hidrográficas complejas.
+  - **Tres sitios en Arequipa y tres en Cuzco** — Mapas de evaluación multilocal para ensayos en distintos pisos altitudinales.
+  - **Parcela experimental con DBCA** — Mapa de ubicación con representación de tratamientos mediante Diseño de Bloques Completos al Azar, presentado en [Poma et al. (2025)](https://doi.org/10.3389/fagro.2025.1663633) en el cultivo de rocoto (*Capsicum pubescens*).
+</Accordion>
+
+<Accordion title="Mapas temáticos">
+  Los mapas temáticos representan la variabilidad espacial de propiedades medidas o calculadas mediante técnicas de interpolación, análisis de clusters u otros métodos estadísticos espaciales. Son el componente visual central de la mayoría de artículos en ciencias del suelo y agricultura de precisión.
+
+  **Ejemplos con sus métodos de interpolación:**
+
+  - **Propiedades del suelo en el Valle del Tambo** — Representación de propiedades físicas y químicas evaluadas mediante **Kriging de regresión** como método de interpolación espacial, publicado en [Poma et al. (2025)](https://doi.org/10.3389/fsoil.2025.1706974).
+  - **Índice de fertilidad del suelo** — Representación cartográfica del índice de fertilidad obtenido mediante análisis estadístico multivariado, con gradiente de color para visualizar zonas deficitarias y óptimas.
+  - **Propiedades del suelo en olivares de Bella Unión** — Mapas de propiedades interpoladas mediante el método **IDW** (Inverse Distance Weighting), presentados en [Poma et al. (2026)](https://doi.org/10.3389/fsoil.2026.1724235).
+  - **Agrupaciones espaciales mediante análisis LISA** — Representación de clusters estadísticos (High-High, Low-Low, High-Low, Low-High) mediante el análisis de Indicadores Locales de Asociación Espacial (LISA), que revela patrones de autocorrelación espacial en las propiedades del suelo.
+</Accordion>
+
+## Métodos de Interpolación Espacial
+
+Los mapas temáticos de propiedades del suelo no se generan a partir de mediciones continuas, sino de puntos de muestreo discretos. Los métodos de interpolación espacial permiten estimar los valores entre puntos medidos para generar una superficie continua representable en un mapa.
+
+<CardGroup cols={3}>
+  <Card title="Kriging de Regresión" icon="chart-line">
+    Método geoestadístico avanzado que combina la regresión sobre variables auxiliares (como datos satelitales o topografía) con el Kriging ordinario sobre los residuales. Produce estimaciones óptimas no sesgadas con varianza mínima y genera mapas de incertidumbre asociados.
+  </Card>
+  <Card title="IDW" icon="arrows-to-dot">
+    El método de **Ponderación por Distancia Inversa** (Inverse Distance Weighting) estima el valor de un punto desconocido como un promedio ponderado de los puntos conocidos cercanos, donde el peso disminuye con la distancia. Es simple, computacionalmente eficiente y no requiere supuestos sobre la estructura espacial de los datos.
+  </Card>
+  <Card title="Análisis LISA" icon="diagram-project">
+    Los **Indicadores Locales de Asociación Espacial** (Local Indicators of Spatial Association) identifican clusters estadísticamente significativos y valores atípicos espaciales. Permite detectar zonas con concentraciones inusualmente altas o bajas de una propiedad, así como transiciones abruptas entre áreas de alta y baja magnitud.
+  </Card>
+</CardGroup>
+
+## Ejemplos en Publicaciones
+
+Los mapas presentados en esta sección han sido publicados en revistas científicas internacionales indexadas. A continuación se listan las referencias completas con acceso a los artículos originales:
+
+| Publicación | Revista | Mapas incluidos | DOI |
+|---|---|---|---|
+| Poma-Chamana, R., Vilca-Gamarra, C. et al. (2025). Estimation and mapping of soil fertility index in arid agricultural environments of the Tambo Valley using regression kriging. | *Frontiers in Soil Science*, 5, 1706974 | Ubicación + Kriging de regresión + Índice de fertilidad | [10.3389/fsoil.2025.1706974](https://doi.org/10.3389/fsoil.2025.1706974) |
+| Poma-Chamana, R., Vilca-Gamarra, C. et al. (2026). Soil Quality in Olive Orchards of Southern Peru Using a Weighted Soil Quality Index (SQIw). | *Frontiers in Soil Science*, 6, 1724235 | Ubicación Bella Unión + IDW + LISA | [10.3389/fsoil.2026.1724235](https://doi.org/10.3389/fsoil.2026.1724235) |
+| Poma-Chamana, R., Cama-Moreno, E. et al. (2025). Evaluating soil cover strategies for enhancing water conservation in rocoto pepper cultivation. | *Frontiers in Agronomy*, 7, 1663633 | Ubicación con diseño DBCA | [10.3389/fagro.2025.1663633](https://doi.org/10.3389/fagro.2025.1663633) |
+
+<Tip>
+  Para exportar mapas con calidad de publicación científica, utiliza el **Diseñador de Impresión** (*Print Layout*) de QGIS. Permite configurar escala gráfica, flecha de norte, leyenda, cuadrícula de coordenadas y exportar en formatos SVG, PDF o PNG a la resolución requerida por la revista (generalmente 300–600 DPI).
+</Tip>
+
+## Referencias
+
+**Artículos científicos**
+
+- Poma-Chamana, R., Vilca-Gamarra, C., Hermoza, N., Mercado, R., Mejía, S., Rengifo, R., & Quispe, K. (2025). Estimation and mapping of soil fertility index in arid agricultural environments of the Tambo Valley using regression kriging. *Frontiers in Soil Science*, 5, 1706974. [https://doi.org/10.3389/fsoil.2025.1706974](https://doi.org/10.3389/fsoil.2025.1706974)
+- Poma-Chamana, R., Vilca-Gamarra, C., Linares-Escapa, S., Puma-Huacani, K., Carrillo, A., Villalta-Soto, M., & Quispe, K. (2026). Soil Quality in Olive Orchards of Southern Peru Using a Weighted Soil Quality Index (SQIw): Constraints by Salinity, Organic Matter and Sustainable Management Approach. *Frontiers in Soil Science*, 6, 1724235. [https://doi.org/10.3389/fsoil.2026.1724235](https://doi.org/10.3389/fsoil.2026.1724235)
+- Poma-Chamana, R., Cama-Moreno, E., Flores-Marquez, R., Quello, A., & Solórzano, R. (2025). Evaluating soil cover strategies for enhancing water conservation, biomass contribution, and weed control in rocoto pepper (*Capsicum pubescens* Ruiz & Pav.) cultivation under arid conditions. *Frontiers in Agronomy*, 7, 1663633. [https://doi.org/10.3389/fagro.2025.1663633](https://doi.org/10.3389/fagro.2025.1663633)

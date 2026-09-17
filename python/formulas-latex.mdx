@@ -1,0 +1,336 @@
+---
+title: "Fórmulas Científicas en LaTeX y MathJax para Investigación"
+sidebarTitle: "Fórmulas LaTeX"
+description: "Aprende a representar fórmulas científicas con LaTeX y MathJax en la web y en Word, con ejemplos del modelo METRIC y estadística espacial."
+---
+
+LaTeX es un sistema de composición tipográfica de alta calidad ampliamente utilizado en documentos técnicos y científicos: artículos académicos, tesis, libros y reportes. Su principal ventaja sobre editores como Word es que produce siempre un resultado tipográfico consistente y de nivel editorial, especialmente en el manejo de fórmulas matemáticas complejas. Para el trabajo en la web, **MathJax** extiende esa capacidad renderizando código LaTeX directamente en el navegador, con la funcionalidad adicional de poder copiar la expresión para reutilizarla en Word, Overleaf u otro documento LaTeX. En investigación de precisión agrícola, edafología y teledetección, esto es especialmente valioso: fórmulas como el balance energético del modelo METRIC o el índice de Moran requieren notación matemática que solo LaTeX puede expresar con la fidelidad que merece una publicación científica.
+
+## ¿Por qué usar LaTeX para fórmulas?
+
+El uso de LaTeX para fórmulas en documentos científicos ofrece ventajas claras frente a los editores de ecuaciones convencionales:
+
+<CardGroup cols={2}>
+  <Card title="Calidad tipográfica" icon="star">
+    Las fórmulas generadas por LaTeX tienen espaciado, tamaño de símbolos y jerarquía visual comparables a los estándares editoriales de revistas como *Nature* o *Frontiers*.
+  </Card>
+  <Card title="Portabilidad total" icon="arrows-left-right">
+    Una misma expresión LaTeX funciona en artículos académicos (Overleaf), tesis, presentaciones Beamer, sitios web (MathJax/KaTeX) y Jupyter Notebooks.
+  </Card>
+  <Card title="Integración con Word" icon="file-word">
+    Word reconoce directamente el código LaTeX en sus bloques de ecuación. Pega la expresión en un campo de ecuación y presiona Enter para que Word la renderice automáticamente.
+  </Card>
+  <Card title="Reproducibilidad" icon="rotate">
+    Al estar escrita en texto plano, la fórmula puede versionarse con Git, compartirse, auditarse y modificarse sin depender de software propietario.
+  </Card>
+</CardGroup>
+
+<Tip>
+Para convertir rápidamente una fórmula descrita en lenguaje natural a código LaTeX, puedes usar ChatGPT con un prompt como: *"Escríbeme la fórmula del RMSE en código LaTeX lista para copiar en Word."* Luego pega el resultado en un bloque de ecuación de Word y presiona Enter — se renderizará automáticamente.
+</Tip>
+
+## MathJax en la web
+
+MathJax permite renderizar fórmulas LaTeX en cualquier página HTML, con la funcionalidad de copiar la expresión al portapapeles haciendo clic derecho sobre la fórmula renderizada y seleccionando **Copy to Clipboard → TeX Commands**. Esto facilita reutilizar fórmulas de este blog en tus propios documentos.
+
+Por ejemplo, el código LaTeX para el error cuadrático medio (RMSE) es:
+
+```latex
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+$$
+```
+
+Una vez renderizado por MathJax, aparece como:
+
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+$$
+
+Para incluir MathJax en tu propio sitio HTML, agrega el siguiente script al `<head>`:
+
+```html
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+```
+
+## Ejemplos de fórmulas
+
+Las siguientes fórmulas provienen de investigaciones reales en análisis de suelos, estadística espacial y estimación de evapotranspiración con teledetección. Se presenta el código LaTeX fuente y una descripción de cada variable.
+
+<AccordionGroup>
+
+<Accordion title="Métricas de validación cruzada (RMSE, MAE, R², ME)">
+
+Las métricas de validación cruzada permiten evaluar la precisión de modelos de interpolación espacial (kriging, IDW) y modelos de regresión. Se calculan comparando los valores predichos con los observados.
+
+**Raíz del error cuadrático medio (RMSE):**
+
+```latex
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+$$
+```
+
+$$\mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}$$
+
+**Error absoluto medio (MAE):**
+
+```latex
+$$
+\mathrm{MAE} = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|
+$$
+```
+
+$$\mathrm{MAE} = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$
+
+**Coeficiente de determinación (R²):**
+
+```latex
+$$
+R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}
+$$
+```
+
+$$R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}$$
+
+**Error medio / sesgo (ME):**
+
+```latex
+$$
+\mathrm{ME} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)
+$$
+```
+
+$$\mathrm{ME} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)$$
+
+Donde $y_i$ es el valor observado en la localización $i$, $\hat{y}_i$ es el valor predicho por validación cruzada, y $\bar{y}$ es la media de todos los valores observados.
+
+</Accordion>
+
+<Accordion title="Índice de calidad del suelo ponderado (SQIw)">
+
+El índice de calidad del suelo ponderado (SQIw, *weighted additive approach*) integra múltiples indicadores edáficos en un único valor normalizado. Los pesos de cada indicador ($W_i$) se derivan del Análisis de Componentes Principales (ACP). Este índice fue aplicado en el estudio de olivares en el sur del Perú ([Poma-Chamana et al., 2026](https://doi.org/10.3389/fsoil.2026.1724235)).
+
+**Fórmula general:**
+
+```latex
+$$
+SQI_w = \sum_{i=1}^{n} W_i N_i
+$$
+```
+
+$$SQI_w = \sum_{i=1}^{n} W_i N_i$$
+
+Donde $n$ es el número total de variables, $W_i$ es el peso asignado a cada indicador y $N_i$ es el puntaje normalizado del indicador (entre 0.1 y 1.0).
+
+**Expresión específica para el Valle de Bella Unión:**
+
+```latex
+$$
+SQI_w = 0.212\,S_{ECe} + 0.204\,S_{pH} + 0.177\,S_{Kav}
+       + 0.160\,S_{Sand} + 0.123\,S_{OM} + 0.123\,S_{Pav}
+$$
+```
+
+**Funciones de puntuación — "más es mejor" (*more is better*):**
+
+```latex
+$$
+M(x) = \begin{cases}
+  0.1 & \text{si } x < x_1 \\
+  0.1 + 0.9\,\dfrac{x - x_1}{x_2 - x_1} & \text{si } x_1 \leq x \leq x_2 \\
+  1   & \text{si } x > x_2
+\end{cases}
+$$
+```
+
+**Función "menos es mejor" (*less is better*):**
+
+```latex
+$$
+L(x) = \begin{cases}
+  1   & \text{si } x < x_1 \\
+  1 - 0.9\,\dfrac{x - x_1}{x_2 - x_1} & \text{si } x_1 \leq x \leq x_2 \\
+  0.1 & \text{si } x > x_2
+\end{cases}
+$$
+```
+
+Donde $x_1$ y $x_2$ son los valores umbral (puntos de inflexión) de la curva de puntuación.
+
+El índice resultante se clasifica en cinco categorías con intervalos iguales de 0.2:
+
+| Clase | Rango SQIw |
+|---|---|
+| Muy pobre | < 0.20 |
+| Pobre | 0.20 – 0.40 |
+| Aceptable | 0.40 – 0.60 |
+| Bueno | 0.60 – 0.80 |
+| Óptimo | ≥ 0.80 |
+
+</Accordion>
+
+<Accordion title="Autocorrelación espacial — Índice I de Moran">
+
+El índice I de Moran mide la autocorrelación espacial de una variable, es decir, si los valores similares tienden a agruparse en el espacio (autocorrelación positiva) o a dispersarse (autocorrelación negativa). Es una prueba diagnóstica fundamental antes de aplicar métodos de interpolación geoestadística.
+
+```latex
+$$
+I = \frac{n}{\displaystyle\sum_{i=1}^{n}\sum_{j=1}^{n} w_{ij}}
+    \cdot
+    \frac{\displaystyle\sum_{i=1}^{n}\sum_{j=1}^{n} w_{ij}
+          (y_i - \bar{y})(y_j - \bar{y})}
+         {\displaystyle\sum_{i=1}^{n}(y_i - \bar{y})^2}
+$$
+```
+
+$$I = \frac{n}{\displaystyle\sum_{i=1}^{n}\sum_{j=1}^{n} w_{ij}} \cdot \frac{\displaystyle\sum_{i=1}^{n}\sum_{j=1}^{n} w_{ij}(y_i - \bar{y})(y_j - \bar{y})}{\displaystyle\sum_{i=1}^{n}(y_i - \bar{y})^2}$$
+
+Donde $n$ es el número de observaciones, $w_{ij}$ es el peso espacial entre las muestras $i$ y $j$, $y_i$ es el valor muestreado en la localización $i$, y $\bar{y}$ es la media aritmética de todos los valores. El índice $I \in [-1, +1]$: valores positivos indican agrupamiento espacial, cercanos a cero indican distribución aleatoria, y negativos indican dispersión.
+
+</Accordion>
+
+<Accordion title="Interpolación espacial (Semivariograma, Kriging y IDW)">
+
+Las técnicas de interpolación espacial permiten estimar valores en ubicaciones no muestreadas a partir de puntos observados. Se aplican en el mapeo de propiedades del suelo, índices de vegetación y variables meteorológicas.
+
+**Semivariograma empírico:**
+
+```latex
+$$
+\gamma(h) = \frac{1}{2} E\left[z(x) - z(x+h)\right]^2
+$$
+```
+
+$$\gamma(h) = \frac{1}{2} E\left[z(x) - z(x+h)\right]^2$$
+
+Donde $E$ representa la varianza esperada, y $z(x)$, $z(x+h)$ son pares de valores separados por la distancia $h$.
+
+**Kriging de regresión (predicción en $S_0$):**
+
+```latex
+$$
+Z(S_0) = m(S_0) + e(S_0)
+       = \sum_{k=1}^{p} \beta_k\, q_k(S_0) + \sum_{i=1}^{N} \lambda_i\, e(S_i)
+$$
+```
+
+$$Z(S_0) = m(S_0) + e(S_0) = \sum_{k=1}^{p} \beta_k\, q_k(S_0) + \sum_{i=1}^{N} \lambda_i\, e(S_i)$$
+
+Donde $\beta_k$ son los coeficientes de regresión asociados a $p$ covariables $q_k$, $\lambda_i$ son los pesos de kriging, $N$ es el número de observaciones, y $e(S_i)$ son los residuos de la regresión en cada punto $S_i$.
+
+**Ponderación por distancia inversa (IDW):**
+
+```latex
+$$
+\hat{y}_p = \frac{\displaystyle\sum_{i=1}^{n} \frac{y_i}{d_i^r}}
+                 {\displaystyle\sum_{i=1}^{n} \frac{1}{d_i^r}}
+$$
+```
+
+$$\hat{y}_p = \frac{\displaystyle\sum_{i=1}^{n} \frac{y_i}{d_i^r}}{\displaystyle\sum_{i=1}^{n} \frac{1}{d_i^r}}$$
+
+Donde $\hat{y}_p$ es el valor predicho en el punto no muestreado $p$; $y_i$ es el valor observado en el punto $i$; $d_i$ es la distancia entre $p$ e $i$; $r$ es el parámetro de potencia (generalmente $r = 2$); y $n$ es el número de puntos vecinos usados (máximo 12).
+
+</Accordion>
+
+<Accordion title="Modelo METRIC — Balance de energía y evapotranspiración">
+
+METRIC (*Mapping Evapotranspiration at high Resolution with Internalized Calibration*) es un modelo de procesamiento de imágenes satelitales para calcular la evapotranspiración (ET) como residuo del balance energético superficial (Allen et al., 2007). A continuación se presentan sus ecuaciones principales.
+
+**Balance de energía superficial:**
+
+```latex
+$$
+LE = R_n - G - H
+$$
+```
+
+$$LE = R_n - G - H$$
+
+Donde $LE$ es el flujo de calor latente, $R_n$ la radiación neta, $G$ el flujo de calor del suelo y $H$ el flujo de calor sensible. Todos en W m⁻².
+
+**Radiación neta en la superficie:**
+
+```latex
+$$
+R_n = (1 - \alpha)\,R_{S\downarrow}
+    + (R_{L\downarrow} - R_{L\uparrow})
+    - (1 - \varepsilon_0)\,R_{L\downarrow}
+$$
+```
+
+$$R_n = (1 - \alpha)\,R_{S\downarrow} + (R_{L\downarrow} - R_{L\uparrow}) - (1 - \varepsilon_0)\,R_{L\downarrow}$$
+
+Donde $\alpha$ es el albedo de superficie, $R_{S\downarrow}$ la radiación de onda corta entrante, $R_{L\downarrow}$ y $R_{L\uparrow}$ las radiaciones de onda larga entrante y saliente, y $\varepsilon_0$ la emisividad del ancho de banda en la superficie.
+
+**Flujo de calor del suelo:**
+
+```latex
+$$
+\frac{G}{R_n} = (T_s - 273.15)\,(0.0038 + 0.0074\,\alpha)\,(1 - 0.98\,\mathrm{NDVI}^4)
+$$
+```
+
+$$\frac{G}{R_n} = (T_s - 273.15)\,(0.0038 + 0.0074\,\alpha)\,(1 - 0.98\,\mathrm{NDVI}^4)$$
+
+Donde $T_s$ es la temperatura de la superficie en Kelvin y $\alpha$ el albedo de la superficie.
+
+**Flujo de calor sensible:**
+
+```latex
+$$
+H = \rho_{\text{air}}\, C_p \,\frac{dT}{r_{ah}}
+$$
+```
+
+$$H = \rho_{\text{air}}\, C_p \,\frac{dT}{r_{ah}}$$
+
+Donde $\rho_{\text{air}}$ es la densidad del aire (kg m⁻³), $C_p$ el calor específico del aire, $dT$ la diferencia de temperatura entre dos alturas $z_1$ y $z_2$, y $r_{ah}$ la resistencia aerodinámica al transporte de calor.
+
+**Evapotranspiración instantánea:**
+
+```latex
+$$
+ET_{\text{inst}} = 3600 \cdot \frac{LE}{\lambda\,\rho_w}
+$$
+```
+
+$$ET_{\text{inst}} = 3600 \cdot \frac{LE}{\lambda\,\rho_w}$$
+
+**Calor latente de vaporización:**
+
+```latex
+$$
+\lambda = \left(2.501 - 0.00236\,(T_s - 273.15)\right) \times 10^6
+$$
+```
+
+$$\lambda = \left(2.501 - 0.00236\,(T_s - 273.15)\right) \times 10^6$$
+
+Donde $ET_{\text{inst}}$ está en mm h⁻¹, $\lambda$ en J kg⁻¹ y $\rho_w$ es la densidad del agua (1000 kg m⁻³).
+
+</Accordion>
+
+</AccordionGroup>
+
+## Conclusiones
+
+Disponer estas fórmulas en formato LaTeX permite reutilizarlas directamente en futuros artículos, tesis o reportes técnicos, agilizando la etapa de redacción y garantizando una presentación tipográfica de nivel publicación. Aprender LaTeX, aunque tiene una curva de aprendizaje inicial, es una inversión que se amortiza rápidamente en cualquier carrera científica: desde la primera ecuación en una tesis hasta la figura de un artículo en una revista indexada.
+
+## Referencias
+
+**Sitios web:**
+- The LaTeX Project — An introduction to LaTeX: [https://www.latex-project.org/about/](https://www.latex-project.org/about/)
+- Universidad de Alicante — ¿Qué es LaTeX?: [https://desarrolloweb.dlsi.ua.es/cursos/2015/herramientas-investigacion/que-es-latex](https://desarrolloweb.dlsi.ua.es/cursos/2015/herramientas-investigacion/que-es-latex)
+- MathJax — Beautiful and accessible math in all browsers: [https://www.mathjax.org/](https://www.mathjax.org/)
+
+**Artículos científicos:**
+- Poma-Chamana, R., Vilca-Gamarra, C., et al. (2025). Estimation and mapping of soil fertility index using regression kriging. *Frontiers in Soil Science*, 5, 1706974. [https://doi.org/10.3389/fsoil.2025.1706974](https://doi.org/10.3389/fsoil.2025.1706974)
+- Poma-Chamana, R., Vilca-Gamarra, C., et al. (2026). Soil Quality in Olive Orchards of Southern Peru Using a Weighted Soil Quality Index (SQIw). *Frontiers in Soil Science*, 6, 1724235. [https://doi.org/10.3389/fsoil.2026.1724235](https://doi.org/10.3389/fsoil.2026.1724235)
+- Allen, R. G., Tasumi, M., & Trezza, R. (2007). Satellite-based energy balance for mapping evapotranspiration with internalized calibration (METRIC) — Model. *Journal of Irrigation and Drainage Engineering*, 133(4), 380–394. [ResearchGate](https://www.researchgate.net/publication/228615269_Satellite-Based_Energy_Balance_for_Mapping_Evapotranspiration_With_Internalized_Calibration_METRIC_-_Model)

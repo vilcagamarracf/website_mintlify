@@ -1,0 +1,201 @@
+---
+title: "Manejo de Paquetes y Ambientes con Anaconda y Conda"
+sidebarTitle: "Anaconda"
+description: "Domina la terminal de Anaconda para gestionar paquetes y entornos virtuales en proyectos de ciencia de datos e investigación científica."
+---
+
+Uno de los mayores retos al desarrollar proyectos científicos con Python es la gestión de dependencias: distintos proyectos pueden requerir versiones incompatibles de la misma librería, y una actualización descuidada puede romper un análisis que funcionaba perfectamente. Trabajar en **local** con Anaconda ofrece estabilidad y reproducibilidad, ya que los ambientes virtuales permiten aislar cada proyecto con su propio conjunto de paquetes y versiones de Python, sin que interfieran entre sí. Este dominio de la terminal de Anaconda es una competencia fundamental para cualquier científico de datos o investigador que trabaje con Python o R.
+
+## Conda vs Anaconda vs Miniconda
+
+Es común confundir estos tres términos. La siguiente tabla resume sus diferencias para que elijas la opción más adecuada según tus necesidades:
+
+| Herramienta | ¿Qué es? | Tamaño | Recomendado para |
+|---|---|---|---|
+| **Conda** | El motor. Sistema de gestión de paquetes y entornos de código abierto. Instala, ejecuta y actualiza dependencias garantizando compatibilidad binaria. | — | Base de todo el ecosistema |
+| **Anaconda** | La "suite" completa. Distribución que incluye Python, R, Conda y cientos de paquetes científicos preinstalados (NumPy, Pandas, Jupyter, etc.). | ~3 GB | Usuarios que quieren todo listo desde el inicio |
+| **Miniconda** | Versión minimalista que incluye solo Conda y sus dependencias básicas. Instala únicamente lo que necesitas. | ~400 MB | Usuarios avanzados o equipos con espacio limitado |
+
+<Tip>
+Para proyectos de investigación en un equipo institucional, se recomienda usar **Miniconda** y crear un ambiente dedicado por proyecto. Esto garantiza reproducibilidad y evita conflictos entre dependencias de diferentes investigaciones.
+</Tip>
+
+## Gestión de Paquetes
+
+Para instalar paquetes en Python dentro del ecosistema Anaconda, se recomienda usar **Conda** en lugar de `pip` siempre que sea posible. Conda garantiza la compatibilidad binaria de las librerías en sus propios repositorios, lo que reduce significativamente los errores de instalación en sistemas operativos diferentes.
+
+### Comandos esenciales de paquetes
+
+| Acción | Comando |
+|---|---|
+| Listar paquetes instalados | `conda list` |
+| Buscar un paquete | `conda search NOMBRE` |
+| Instalar la última versión | `conda install NOMBRE` |
+| Instalar versión específica | `conda install NOMBRE=1.4.2` |
+| Actualizar un paquete | `conda update NOMBRE` |
+| Eliminar un paquete | `conda remove NOMBRE` |
+
+**Ejemplos de uso:**
+
+```bash
+# Listar todos los paquetes instalados en el ambiente activo
+conda list
+
+# Buscar versiones disponibles de numpy
+conda search numpy
+
+# Instalar geopandas
+conda install geopandas
+
+# Instalar una versión específica de scikit-learn
+conda install scikit-learn=1.4.2
+
+# Actualizar pandas a la última versión disponible
+conda update pandas
+
+# Eliminar el paquete openpyxl
+conda remove openpyxl
+```
+
+<Tip>
+Conda utiliza el sistema de versionamiento **MAJOR.MINOR.PATCH**. Un cambio en *Major* implica rupturas de compatibilidad; *Minor* añade nuevas funciones manteniendo compatibilidad; *Patch* corrige errores sin afectar la interfaz. Fijar versiones con `NOMBRE=MAJOR.MINOR` es una buena práctica para proyectos a largo plazo.
+</Tip>
+
+## Canales (Channels)
+
+Los canales son los repositorios remotos desde donde Conda descarga los paquetes. El canal por defecto es el de Anaconda (`defaults`), pero existen alternativas comunitarias muy potentes:
+
+- **`defaults`**: Canal oficial de Anaconda. Estable y probado, pero con actualizaciones menos frecuentes.
+- **`conda-forge`**: Canal mantenido por la comunidad. Contiene una mayor variedad de paquetes y versiones más recientes. Es la primera opción cuando un paquete no está disponible en `defaults`.
+- **`bioconda`**: Especializado en bioinformática.
+
+```bash
+# Buscar un paquete en el canal conda-forge
+conda search -c conda-forge earthengine-api
+
+# Instalar desde el canal conda-forge
+conda install -c conda-forge geemap
+
+# Instalar múltiples paquetes desde conda-forge
+conda install -c conda-forge rasterio fiona pyproj shapely
+
+# Agregar conda-forge como canal prioritario permanente
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+```
+
+<Info>
+Al agregar `conda-forge` como canal con prioridad estricta, Conda buscará primero en ese canal antes que en `defaults`. Esto reduce los conflictos de versiones en proyectos de teledetección y SIG que dependen de paquetes como `rasterio`, `gdal` o `geemap`.
+</Info>
+
+## Gestión de Ambientes
+
+Los ambientes virtuales permiten aislar proyectos por completo. Por ejemplo, puedes tener un ambiente con Python 3.8 para una tesis que usa GDAL 3.4 y otro con Python 3.11 para un proyecto nuevo que requiere las últimas versiones de todas las librerías, sin que interfieran entre sí.
+
+<Steps>
+
+### Listar todos los ambientes existentes
+
+```bash
+conda env list
+```
+
+El asterisco `*` indica el ambiente actualmente activo. El ambiente `base` es el que se activa por defecto al abrir la terminal.
+
+```
+# conda environments:
+#
+base                  *  /home/usuario/anaconda3
+tesis_metric             /home/usuario/anaconda3/envs/tesis_metric
+gee_proyecto             /home/usuario/anaconda3/envs/gee_proyecto
+```
+
+### Crear un nuevo ambiente
+
+```bash
+# Crear ambiente con una versión específica de Python
+conda create -n mi_proyecto python=3.9
+
+# Crear ambiente e instalar paquetes al mismo tiempo
+conda create -n analisis_suelos python=3.10 pandas scipy matplotlib seaborn
+```
+
+El flag `-n` especifica el nombre del ambiente. Conda te pedirá confirmación antes de instalar; responde `y` para continuar.
+
+### Activar el ambiente
+
+```bash
+conda activate mi_proyecto
+```
+
+Verás que el prompt de la terminal cambia para mostrar el nombre del ambiente activo entre paréntesis: `(mi_proyecto) $`.
+
+### Trabajar en el ambiente
+
+Una vez activado, todos los comandos `conda install` y `pip install` instalarán paquetes exclusivamente en ese ambiente. Puedes abrir Jupyter Notebook, ejecutar scripts y trabajar con normalidad.
+
+```bash
+# Instalar dependencias del proyecto
+conda install -c conda-forge pandas geopandas rasterio jupyter
+
+# Registrar el ambiente como kernel de Jupyter
+conda install ipykernel
+python -m ipykernel install --user --name mi_proyecto --display-name "Python (mi_proyecto)"
+
+# Abrir Jupyter
+jupyter notebook
+```
+
+### Desactivar el ambiente
+
+```bash
+conda deactivate
+```
+
+El prompt regresará al ambiente `base`. Es buena práctica desactivar el ambiente al terminar de trabajar en un proyecto.
+
+### Eliminar un ambiente que ya no se necesita
+
+```bash
+conda env remove -n mi_proyecto
+```
+
+<Warning>
+Esta acción es irreversible. Todos los paquetes instalados en ese ambiente se eliminarán permanentemente. Asegúrate de tener un archivo `environment.yml` de respaldo antes de eliminar un ambiente de un proyecto activo.
+</Warning>
+
+</Steps>
+
+## Exportar y reproducir ambientes
+
+Para compartir un ambiente con colegas o reproducirlo en otro equipo, exporta su configuración a un archivo `environment.yml`:
+
+```bash
+# Exportar el ambiente activo
+conda env export > environment.yml
+
+# Crear un ambiente idéntico en otro equipo
+conda env create -f environment.yml
+```
+
+El archivo `environment.yml` generado tiene esta estructura:
+
+```yaml
+name: analisis_suelos
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.12
+  - pandas=2.1.4
+  - geopandas=0.14.2
+  - rasterio=1.3.9
+  - matplotlib=3.8.2
+  - seaborn=0.13.0
+  - pip:
+    - pymet==0.2.1
+```
+
+<Tip>
+Incluye el archivo `environment.yml` en el repositorio de cada proyecto de investigación. Esto garantiza que cualquier colaborador pueda reproducir exactamente el mismo entorno de trabajo con un solo comando, asegurando la reproducibilidad del análisis científico.
+</Tip>

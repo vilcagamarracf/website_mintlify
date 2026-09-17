@@ -1,72 +1,73 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Cesar Vilca",
+  "theme": "willow",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#d6d6d6",
+    "light": "#2e2e33"
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "tab": "Inicio",
+        "groups": [
+          {
+            "group": "Sobre Este Blog",
+            "pages": [
+              "introduccion",
+              "sobre-cesar",
+              "publicaciones"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Programación",
+        "groups": [
+          {
+            "group": "Python para Investigación",
+            "pages": [
+              "python/visualizaciones",
+              "python/reportes-pdf",
+              "python/anaconda"
+            ]
+          },
+          {
+            "group": "Fórmulas y Documentos",
+            "pages": [
+              "python/formulas-latex"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Teledetección & SIG",
+        "groups": [
+          {
+            "group": "Plataformas y Herramientas",
+            "pages": [
+              "sig/google-earth-engine",
+              "sig/qgis-mapas",
+              "sig/diagramas-drawio"
+            ]
+          },
+          {
+            "group": "Agricultura Digital",
+            "pages": [
+              "sig/clasificacion-cultivos",
+              "sig/computer-vision",
+              "sig/agricultura-digital"
+            ]
+          }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
     ]
   },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/vilcagamarracf"
     }
   }
 }

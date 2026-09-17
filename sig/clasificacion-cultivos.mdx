@@ -1,0 +1,110 @@
+---
+title: "Clasificación de Cultivos Agrícolas mediante Teledetección"
+sidebarTitle: "Clasificación de Cultivos"
+description: "Aprende a clasificar cultivos usando teledetección, imágenes Sentinel-2 y Landsat, y métodos de Machine Learning supervisado y no supervisado."
+---
+
+En un mundo donde la población mundial se proyecta hacia los 9.700 millones de personas para el año 2050, la seguridad alimentaria y la gestión sostenible de la tierra han dejado de ser metas deseables para convertirse en imperativos críticos. La teledetección (o percepción remota) se ha consolidado como la herramienta principal para monitorear esta evolución, permitiendo transformar datos satelitales en mapas precisos de cultivos con cobertura regional y global. Este artículo recopila los fundamentos, la importancia y las metodologías esenciales para entender cómo se clasifica lo que crece en nuestros suelos.
+
+## ¿Por qué mapear los cultivos?
+
+La clasificación de cultivos no es un ejercicio cartográfico aislado; es la base para la toma de decisiones a escala nacional y global. Según diversos estudios y marcos normativos internacionales, sus aplicaciones son de alta relevancia:
+
+- **Seguridad Alimentaria:** El mapeo eficiente de cultivos es esencial para cumplir los objetivos de "Hambre Cero" de las Naciones Unidas (ODS 2), permitiendo identificar brechas productivas y orientar políticas de abastecimiento.
+- **Gestión Ambiental:** Permite modelar la calidad del agua, estimar la evapotranspiración de cultivos y cuantificar daños por desastres naturales como inundaciones de manera distribuida espacialmente.
+- **Planificación Agraria:** En el caso del Perú, el Mapa Nacional de Superficie Agrícola del MIDAGRI permite focalizar intervenciones estatales, mejorar las estadísticas del sector y diseñar políticas de seguro agrario.
+- **Modelado Climático:** La intensidad de cultivo, el calendario de siembra y la cobertura vegetal son variables de entrada críticas para los modelos de clima y superficie terrestre a escala global.
+
+## Tipos de Clasificación
+
+Para abordar el problema de identificar categorías en una imagen o conjunto de datos, se recurre a tres enfoques principales que van desde la estadística clásica hasta el aprendizaje profundo.
+
+<Tabs>
+  <Tab title="Clasificación Estadística">
+    La clasificación estadística se define como el problema de identificar a qué categoría pertenece una nueva observación, basándose en un conjunto de datos de entrenamiento previo (datos de formación). Es la base lógica sobre la que se construyen los algoritmos más complejos de Machine Learning.
+
+    En su forma más básica, un clasificador estadístico aprende las distribuciones de probabilidad de cada clase a partir de datos conocidos y asigna una nueva observación a la clase más probable según algún criterio de decisión (por ejemplo, distancia mínima, máxima probabilidad a posteriori).
+
+    Este enfoque es útil como punto de partida conceptual y para establecer líneas base (*baselines*) antes de aplicar métodos más avanzados.
+  </Tab>
+  <Tab title="Percepción Remota">
+    En el contexto de la teledetección, la clasificación se aborda como un problema de **reconocimiento de patrones**. El flujo de trabajo estructurado sigue tres etapas fundamentales:
+
+    <Steps>
+      <Step title="Selección del sensor">
+        Definir el medio de obtención de la imagen según los requerimientos del estudio: resolución espacial, temporal y espectral. Para clasificación de cultivos, los sensores más utilizados son **Sentinel-2** (resolución 10 m, 13 bandas) y **Landsat** (resolución 30 m, con registros desde 1972).
+      </Step>
+      <Step title="Procesamiento y extracción de rasgos">
+        Aplicar correcciones radiométricas y atmosféricas a las imágenes, calcular índices espectrales relevantes (NDVI, EVI, SAVI, NDWI) y construir series temporales que capturen el ciclo fenológico de los cultivos.
+      </Step>
+      <Step title="Aplicación del algoritmo de clasificación">
+        Entrenar el clasificador con datos de referencia (*ground truth*) y aplicarlo a la imagen para generar el mapa de cultivos. La validación posterior mediante matrices de confusión y métricas de exactitud (Overall Accuracy, Kappa) es parte fundamental del proceso.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Machine Learning">
+    El aprendizaje automático ofrece dos grandes paradigmas para la clasificación de cultivos:
+
+    **Aprendizaje Supervisado**
+
+    Cuando se dispone de etiquetas (clases) conocidas para entrenar al clasificador. Los algoritmos más utilizados en teledetección agrícola incluyen:
+
+    - **Random Forest (RF):** Ensamble de árboles de decisión. Robusto ante el sobreajuste y capaz de manejar grandes cantidades de variables predictoras. Produce estimaciones de importancia de variables.
+    - **Support Vector Machine (SVM):** Separa clases mediante hiperplanos en espacios de alta dimensión. Eficiente con pocas muestras de entrenamiento y alta dimensionalidad espectral.
+    - **Redes Neuronales / Deep Learning:** CNN (*Convolutional Neural Networks*) aplicadas a imágenes satelitales de alta resolución para capturar patrones espaciales y temporales complejos.
+
+    **Aprendizaje No Supervisado (Clustering)**
+
+    Cuando no se dispone de etiquetas previas. El algoritmo agrupa los píxeles por similitudes inherentes (distancias en el espacio espectral) sin supervisión humana:
+
+    - **k-means:** Agrupa píxeles en *k* clusters minimizando la distancia intra-cluster. Requiere especificar el número de clases a priori.
+    - **ISODATA:** Variante iterativa de k-means que permite fusionar y dividir clusters automáticamente. Ampliamente utilizado en clasificación de imágenes Landsat.
+  </Tab>
+</Tabs>
+
+## Teledetección: Fundamentos Técnicos
+
+La teledetección es el registro de información mediante sensores (cámaras, escáneres, láseres) sin contacto físico con el objeto de estudio. Estos sensores detectan y registran la **Radiación de Energía Electromagnética (EMR)** reflejada o emitida por la superficie terrestre, la cual viaja a la velocidad de la luz (3 × 10⁸ m/s).
+
+Los sensores **pasivos** (como los satélites ópticos Landsat y Sentinel-2) miden la radiación solar reflejada por la superficie en distintas longitudes de onda. Los sensores **activos** (como SAR) emiten su propia señal y miden el retorno.
+
+### Ventajas y Limitaciones
+
+<CardGroup cols={2}>
+  <Card title="Ventajas" icon="circle-check">
+    - **No invasivo:** No perturba el área de estudio ni requiere acceso físico al terreno.
+    - **Sistemático y repetitivo:** Permite monitorear la misma área a intervalos regulares (5 días para Sentinel-2, 16 días para Landsat).
+    - **Información biofísica:** Proporciona datos de biomasa, humedad superficial, temperatura y productividad primaria a escala de paisaje.
+  </Card>
+  <Card title="Limitaciones" icon="circle-exclamation">
+    - **Descalibración de instrumentos:** Los sensores pueden perder calibración radiométrica con el tiempo, afectando la comparabilidad de series temporales largas.
+    - **Factor humano:** Los errores en la especificación de parámetros de misión o en la colecta de datos de referencia (*ground truth*) se propagan a los resultados.
+    - **Inviabilidad de la interpretación manual:** A escala regional o global, la interpretación visual consume demasiado tiempo y es subjetiva; requiere automatización.
+  </Card>
+</CardGroup>
+
+### El Rol de la Computación
+
+El ojo humano solo puede diferenciar tres bandas del espectro visible (rojo, verde, azul). Sin embargo, sensores como Sentinel-2 capturan 13 bandas espectrales, y sensores hiperespectrales como AVIRIS capturan cientos de bandas en el rango de 0,4 a 2,5 μm. Procesar esta información multidimensional requiere sistemas computacionales automatizados.
+
+Estos sistemas categorizan los píxeles basándose en tres dimensiones fundamentales:
+
+| Dimensión | Descripción | Ejemplo de aplicación |
+|---|---|---|
+| **Espacio** | Texturas y patrones espaciales en la imagen | Distinguir campos agrícolas de bosques por su textura homogénea |
+| **Tiempo** | Variación de la firma espectral durante el ciclo fenológico | Separar maíz de trigo por su calendario de siembra y cosecha |
+| **Espectro** | Diferencias de reflectancia en distintas longitudes de onda | Identificar estrés hídrico mediante bandas del infrarrojo corto |
+
+## Conclusiones
+
+La clasificación de cultivos mediante teledetección ha evolucionado de la interpretación visual subjetiva hacia sistemas automatizados de alta precisión. La integración de datos de sensores como **Sentinel-2** y **Landsat**, procesados en plataformas de alto rendimiento computacional como Google Earth Engine, nos permite hoy no solo saber *qué* se está sembrando, sino *cómo* está respondiendo el territorio ante los cambios climáticos y la demanda de mercado.
+
+Como investigadores, el reto actual reside en la calibración precisa de estos modelos con datos de referencia *in situ* (*ground truth*) para reducir la incertidumbre y convertir los píxeles en información accionable para el agricultor y el tomador de decisiones políticas.
+
+## Referencias seleccionadas
+
+1. **Jensen, J. R. (2013).** *Remote Sensing of the Environment: An Earth Resource Perspective*. Pearson Education Limited.
+2. **Borra, S., Thanki, R., & Dey, N. (2019).** *Satellite Image Analysis: Clustering and Classification*. Springer.
+3. **Immitzer, M., Vuolo, F., & Atzberger, C. (2016).** First experience with Sentinel-2 data for crop and tree species classifications in central Europe. *Remote Sensing*, 8(3), 166.
+4. **INEGI.** *Clasificación de cultivos agrícolas*. [https://rde.inegi.org.mx/rde_16/doctos/rde_16_art5.pdf](https://rde.inegi.org.mx/rde_16/doctos/rde_16_art5.pdf)
+5. **MIDAGRI.** *Mapa Nacional de Superficie Agrícola del Perú*. [https://siea.midagri.gob.pe/portal/normas](https://siea.midagri.gob.pe/portal/normas)

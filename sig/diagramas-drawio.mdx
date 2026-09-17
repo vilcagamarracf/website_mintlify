@@ -1,0 +1,76 @@
+---
+title: "Elaboración de Diagramas de Flujo con draw.io"
+sidebarTitle: "Diagramas draw.io"
+description: "Crea diagramas de flujo profesionales para investigación con draw.io, exporta en múltiples formatos e intégralos en artículos y tesis."
+---
+
+En investigación científica, un diagrama de flujo bien elaborado puede condensar metodologías complejas en una figura comprensible de un solo vistazo. **draw.io** (también conocido como diagrams.net) es una herramienta gratuita, basada en navegador, que permite crear diagramas de flujo, mapas conceptuales, arquitecturas de sistemas y cualquier tipo de visualización estructurada con un nivel de detalle y estética profesional. Su integración directa con Google Drive, GitHub y sistemas de almacenamiento local, junto con sus amplias opciones de exportación, la convierten en una opción ideal para investigadores que necesitan incluir diagramas en tesis, artículos científicos y presentaciones.
+
+<Tip>
+  draw.io es completamente gratuito y no requiere instalación. Puedes usarlo directamente desde tu navegador en [https://app.diagrams.net/](https://app.diagrams.net/) sin crear una cuenta, aunque también ofrece integración con Google Drive para guardar tus proyectos en la nube.
+</Tip>
+
+## Pasos para crear un diagrama
+
+El proceso de elaboración de un diagrama en draw.io es intuitivo y sigue un flujo de trabajo claro desde la apertura de la herramienta hasta la exportación del resultado final.
+
+<Steps>
+  <Step title="Abrir draw.io">
+    Ingresa a [https://app.diagrams.net/](https://app.diagrams.net/) desde tu navegador. Al iniciar, la herramienta te preguntará dónde deseas guardar tu archivo. Puedes elegir **Google Drive**, **OneDrive**, **GitHub** o **almacenamiento del dispositivo** para trabajar localmente.
+  </Step>
+  <Step title="Crear un proyecto nuevo">
+    Selecciona **"Create New Diagram"** y elige una plantilla de inicio o una pizarra en blanco. Para diagramas de flujo metodológico, la plantilla **Flowchart** es un buen punto de partida. El archivo se guardará con extensión `.drawio` o `.xml`.
+  </Step>
+  <Step title="Agregar y conectar elementos">
+    Desde el panel lateral, arrastra formas (rectángulos, rombos, cilindros, flechas) al lienzo y conéctalas entre sí. Haz doble clic sobre cualquier elemento para añadir etiquetas de texto. Puedes personalizar colores, bordes, tipografía y tamaño para que el diagrama sea coherente con el estilo visual de tu publicación.
+  </Step>
+  <Step title="Exportar el diagrama">
+    Una vez finalizado el diagrama, ve a **File → Export As** y elige el formato adecuado según tu destino de uso. Los formatos disponibles incluyen SVG, PNG, PDF y XML, cada uno con ventajas específicas según el contexto de uso.
+  </Step>
+</Steps>
+
+## Caso de uso — Diagrama de flujo METRIC
+
+Un ejemplo concreto de la utilidad de draw.io en investigación es el diagrama de flujo elaborado para representar la metodología de **estimación de evapotranspiración diaria** mediante el modelo METRIC (*Mapping EvapoTranspiration at high Resolution with Internalized Calibration*).
+
+Este diagrama forma parte de una tesis que aborda el cálculo del balance energético superficial a partir de imágenes satelitales Landsat. El flujo metodológico incluye las siguientes etapas principales:
+
+<CardGroup cols={2}>
+  <Card title="Entrada de datos" icon="satellite">
+    Adquisición de imágenes Landsat, datos meteorológicos de estaciones y parámetros de calibración (píxeles ancla frío y caliente).
+  </Card>
+  <Card title="Preprocesamiento" icon="sliders">
+    Corrección atmosférica, cálculo de reflectancias en la superficie y obtención de temperatura de brillo.
+  </Card>
+  <Card title="Balance energético" icon="bolt">
+    Cálculo de los componentes del balance: radiación neta (Rn), flujo de calor del suelo (G), calor sensible (H) y calor latente (LE).
+  </Card>
+  <Card title="Evapotranspiración" icon="droplets">
+    Estimación de la fracción evaporativa (EF), extrapolación a evapotranspiración diaria (ET₂₄) y mapeo espacial de resultados.
+  </Card>
+</CardGroup>
+
+El diagrama fue exportado en formato **SVG** para su inclusión directa en el documento de tesis, garantizando que las líneas y el texto se visualicen nítidamente a cualquier escala de impresión o visualización digital.
+
+## Formatos de exportación y sus usos
+
+Elegir el formato correcto al exportar un diagrama impacta directamente en la calidad visual del resultado final.
+
+| Formato | Descripción | Uso recomendado |
+|---|---|---|
+| **SVG** | Gráfico vectorial escalable; no pierde calidad al ampliar | Artículos científicos, tesis, documentos que se imprimen a alta resolución |
+| **PNG** | Imagen de trama con fondo transparente opcional | Presentaciones en PowerPoint o Google Slides, plataformas web |
+| **PDF** | Documento vectorial multipágina | Informes técnicos, documentos imprimibles completos |
+| **XML** | Formato nativo de draw.io | Respaldo y edición futura del diagrama; permite reabrir y modificar |
+
+<Info>
+  Cuando envíes un diagrama a una revista científica, verifica en las instrucciones para autores qué formato y resolución mínima solicitan. La mayoría de revistas de alto impacto aceptan SVG o requieren imágenes PNG/TIFF a 300 DPI o superior.
+</Info>
+
+## Conclusiones
+
+Si bien existen otras herramientas para crear diagramas (como Microsoft Visio o Lucidchart), draw.io destaca por ser completamente gratuito, accesible desde cualquier navegador y con opciones de exportación amplias que cubren todos los escenarios de uso en investigación científica. La posibilidad de guardar el archivo fuente en formato XML garantiza que puedas retomar y modificar tu diagrama en cualquier momento, sin perder el trabajo original.
+
+## Referencias
+
+- draw.io / diagrams.net: [https://app.diagrams.net/](https://app.diagrams.net/)

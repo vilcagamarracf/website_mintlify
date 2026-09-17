@@ -1,0 +1,282 @@
+---
+title: "Generación de Reportes PDF Automatizados con ReportLab"
+sidebarTitle: "Reportes PDF"
+description: "Genera reportes PDF automatizados desde archivos CSV usando Python y la librería ReportLab, con tablas, gráficos y datos del cliente."
+---
+
+En laboratorios de análisis de suelos y nutrición vegetal, los resultados de cada muestra deben entregarse en un documento formal que incluya la información del cliente, los valores analíticos y representaciones gráficas que faciliten su interpretación. Hacerlo manualmente para decenas o cientos de muestras es inviable. Python, a través de la librería ReportLab, permite generar estos reportes de forma completamente automatizada: un único script lee un archivo CSV con los resultados, itera sobre cada fila y produce un PDF independiente por muestra con formato consistente, logo institucional, tablas y gráficos calculados dinámicamente.
+
+## ¿Qué es ReportLab?
+
+ReportLab es una herramienta de código abierto que permite crear documentos en formato PDF directamente desde Python. A diferencia de las soluciones orientadas a plantillas, ReportLab opera con un modelo de lienzo de coordenadas que da control total sobre la posición de cada elemento en la página.
+
+**Características principales:**
+
+- Generación de PDFs complejos y de múltiples páginas desde Python
+- Soporte para texto enriquecido, imágenes y logos
+- Creación de tablas con estilos personalizables
+- Elementos gráficos vectoriales (líneas, rectángulos, barras, tortas)
+- Dos enfoques de diseño: Canvas (coordenadas directas) y Platypus (flujo de contenido)
+- Código abierto con documentación oficial completa
+
+**Casos de uso típicos:**
+
+- Informes de análisis de laboratorio a partir de bases de datos
+- Facturas y certificados personalizados por cliente o evento
+- Documentación técnica generada automáticamente
+- Reportes científicos con gráficos calculados al vuelo
+
+<Warning>
+ReportLab presenta una curva de aprendizaje empinada, especialmente para diseños de múltiples columnas o gráficas con coordenadas dinámicas. Se recomienda comenzar con plantillas simples e ir complejizando el diseño de forma incremental.
+</Warning>
+
+## Instalación
+
+ReportLab se instala fácilmente con pip desde cualquier terminal o desde un notebook de Google Colab:
+
+```bash
+pip install reportlab
+```
+
+Para verificar la instalación correcta:
+
+```python
+import reportlab
+print(reportlab.Version)
+```
+
+## Flujo de trabajo
+
+<Steps>
+
+### Preparar los datos en CSV
+
+El archivo de entrada debe tener una fila de encabezados y una fila por reporte a generar. Cada columna corresponde a un campo del reporte: datos del cliente, resultados analíticos numéricos y textos informativos. Verifica los tipos de dato con `pandas` antes de procesar.
+
+```python
+import pandas as pd
+
+df = pd.read_csv("resultados_laboratorio.csv")
+print(df.dtypes)
+# float64 → valores numéricos para cálculos
+# int64   → enteros (códigos, IDs)
+# object  → textos (nombres, observaciones)
+```
+
+### Instalar ReportLab
+
+```bash
+pip install reportlab
+```
+
+### Definir la estructura del reporte
+
+Antes de escribir código, dibuja en papel el layout de la página: dónde va el logo, el título, los bloques de información del cliente, las tablas de resultados y los gráficos. Convierte esas posiciones a coordenadas en puntos (pt), donde el origen `(0, 0)` está en la esquina inferior izquierda de la página.
+
+```python
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+
+ANCHO, ALTO = A4          # 595.28 pt × 841.89 pt
+
+# Referencias de posición útiles
+MARGEN_IZQ   = 2 * cm
+MARGEN_SUP   = ALTO - 2 * cm
+ANCHO_UTIL   = ANCHO - 4 * cm
+```
+
+### Crear la función generadora
+
+Encapsula todo el proceso de construcción del PDF en una función que reciba la ruta del CSV como único argumento. La función itera sobre cada fila del DataFrame y llama a `canvas.save()` al finalizar cada página.
+
+```python
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+import pandas as pd
+import os
+
+def generar_reportes(ruta_csv: str) -> None:
+    """Genera un PDF por fila en el archivo CSV indicado."""
+    df = pd.read_csv(ruta_csv)
+    carpeta_salida = os.path.dirname(os.path.abspath(ruta_csv))
+    ANCHO, ALTO = A4
+
+    for _, fila in df.iterrows():
+        nombre_archivo = os.path.join(
+            carpeta_salida,
+            f"Reporte_{int(fila['id_muestra']):03d}.pdf"
+        )
+        c = canvas.Canvas(nombre_archivo, pagesize=A4)
+
+        # ── Encabezado ────────────────────────────────────────────────
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(2 * cm, ALTO - 2 * cm,
+                     "REPORTE DE ANÁLISIS DE SUELOS")
+
+        c.setFont("Helvetica", 10)
+        c.drawString(2 * cm, ALTO - 2.8 * cm,
+                     f"Cliente : {fila['cliente']}")
+        c.drawString(2 * cm, ALTO - 3.4 * cm,
+                     f"Muestra : {int(fila['id_muestra'])}")
+        c.drawString(2 * cm, ALTO - 4.0 * cm,
+                     f"Fecha   : {fila['fecha_analisis']}")
+
+        # ── Línea divisoria ───────────────────────────────────────────
+        c.setStrokeColor(colors.HexColor("#888888"))
+        c.setLineWidth(0.5)
+        c.line(2 * cm, ALTO - 4.5 * cm, ANCHO - 2 * cm, ALTO - 4.5 * cm)
+
+        # ── Tabla de resultados ───────────────────────────────────────
+        datos_tabla = [
+            ["Parámetro", "Valor", "Unidad", "Rango óptimo"],
+            ["pH",              f"{fila['ph']:.2f}",   "–",        "6.0 – 7.0"],
+            ["C.O. del suelo",  f"{fila['cos']:.2f}",  "%",        "> 1.5"],
+            ["N total",         f"{fila['n_total']:.3f}", "%",     "> 0.10"],
+            ["P disponible",    f"{fila['p_disp']:.1f}",  "ppm",  "> 10"],
+            ["K disponible",    f"{fila['k_disp']:.0f}",  "ppm",  "> 120"],
+            ["CE",              f"{fila['ce']:.2f}",   "dS/m",     "< 4.0"],
+        ]
+
+        tabla = Table(datos_tabla,
+                      colWidths=[5.5 * cm, 2.5 * cm, 2 * cm, 4 * cm])
+        tabla.setStyle(TableStyle([
+            ("BACKGROUND",  (0, 0), (-1, 0),  colors.HexColor("#2e2e33")),
+            ("TEXTCOLOR",   (0, 0), (-1, 0),  colors.white),
+            ("FONTNAME",    (0, 0), (-1, 0),  "Helvetica-Bold"),
+            ("FONTSIZE",    (0, 0), (-1, -1), 9),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1),
+             [colors.HexColor("#f5f5f5"), colors.white]),
+            ("GRID",        (0, 0), (-1, -1), 0.3, colors.HexColor("#cccccc")),
+            ("LEFTPADDING", (0, 0), (-1, -1), 6),
+            ("RIGHTPADDING",(0, 0), (-1, -1), 6),
+        ]))
+
+        tabla.wrapOn(c, ANCHO, ALTO)
+        tabla.drawOn(c, 2 * cm, ALTO - 10 * cm)
+
+        # ── Finalizar página ──────────────────────────────────────────
+        c.save()
+
+    print(f"✓  {len(df)} reportes generados en: {carpeta_salida}")
+```
+
+### Ejecutar y generar los reportes
+
+```python
+generar_reportes("resultados_laboratorio.csv")
+# ✓  10 reportes generados en: /content/drive/MyDrive/Reportes/
+```
+
+</Steps>
+
+## Conceptos clave de ReportLab
+
+<AccordionGroup>
+
+<Accordion title="Canvas: el lienzo con coordenadas">
+
+El objeto `canvas.Canvas` representa una página en blanco donde el origen `(0, 0)` está ubicado en la **esquina inferior izquierda**. Todos los elementos —textos, imágenes, líneas, tablas— deben posicionarse con coordenadas `(x, y)` en puntos (`pt`). Un centímetro equivale a `28.35 pt`, o puedes usar `from reportlab.lib.units import cm` para convertir directamente.
+
+```python
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+
+c = canvas.Canvas("ejemplo.pdf", pagesize=A4)
+ANCHO, ALTO = A4
+
+# Texto en la esquina superior izquierda
+c.setFont("Helvetica-Bold", 12)
+c.drawString(2 * cm, ALTO - 2 * cm, "Hola, mundo desde ReportLab")
+
+# Rectángulo decorativo
+c.setFillColorRGB(0.18, 0.18, 0.20)
+c.rect(2 * cm, ALTO - 2.8 * cm, ANCHO - 4 * cm, 0.3 * cm, fill=1, stroke=0)
+
+c.save()
+```
+
+</Accordion>
+
+<Accordion title="Flowables y el motor Platypus">
+
+Para contenido que debe fluir automáticamente entre páginas (textos largos, tablas grandes), ReportLab ofrece el sistema **Platypus** con sus objetos "flowables": `Paragraph`, `Table`, `Spacer`, `Image`, entre otros. Estos se ensamblan en una lista y se renderizan con `SimpleDocTemplate`.
+
+```python
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+
+doc    = SimpleDocTemplate("reporte_flowable.pdf", pagesize=A4)
+styles = getSampleStyleSheet()
+story  = []
+
+story.append(Paragraph("Resultados de Análisis", styles["Title"]))
+story.append(Spacer(1, 0.5 * cm))
+story.append(Paragraph(
+    "Los resultados a continuación corresponden a muestras de suelo "
+    "tomadas en el Valle de Tambo durante la campaña 2024.",
+    styles["BodyText"]
+))
+story.append(Spacer(1, 0.4 * cm))
+
+datos = [["pH", "C.O. (%)", "N (%)", "P (ppm)", "K (ppm)"],
+         ["6.8", "1.92",    "0.14",  "18.3",    "145"]]
+tabla = Table(datos, colWidths=[2.5 * cm] * 5)
+story.append(tabla)
+
+doc.build(story)
+```
+
+</Accordion>
+
+<Accordion title="Tablas con estilos dinámicos">
+
+Uno de los desafíos más comunes al usar ReportLab es construir tablas que mantengan su estructura cuando las celdas contienen textos de longitud variable. La solución es combinar `Paragraph` dentro de las celdas de la tabla con el estilo `TableStyle`:
+
+```python
+from reportlab.platypus import Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+
+styles = getSampleStyleSheet()
+
+# Usar Paragraph para celdas con texto largo
+datos = [
+    [Paragraph("<b>Observación</b>", styles["Normal"]),
+     Paragraph("<b>Valor</b>", styles["Normal"])],
+    [Paragraph("Presencia de sales con CE elevada", styles["Normal"]),
+     Paragraph("5.2 dS/m", styles["Normal"])],
+]
+
+tabla = Table(datos, colWidths=[10 * cm, 4 * cm])
+tabla.setStyle(TableStyle([
+    ("VALIGN",     (0, 0), (-1, -1), "TOP"),
+    ("FONTSIZE",   (0, 0), (-1, -1), 9),
+    ("GRID",       (0, 0), (-1, -1), 0.3, colors.grey),
+    ("TOPPADDING", (0, 0), (-1, -1), 4),
+]))
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+## Código completo en GitHub
+
+<Note>
+El notebook completo con la función de ~735 líneas (incluyendo gráficas de barra con coordenadas dinámicas y gráficos de pie con Platypus) está disponible en el repositorio de GitHub: [**vilcagamarracf/Python\_Snippets — GenerarPDF.ipynb**](https://github.com/vilcagamarracf/Python_Snippets/blob/main/GenerarPDF.ipynb)
+</Note>
+
+## Conclusiones
+
+Automatizar la generación de reportes PDF con ReportLab requiere una inversión inicial de tiempo para entender el sistema de coordenadas y los objetos disponibles, pero una vez estructurada la función generadora, producir decenas o cientos de documentos se reduce a una sola llamada. La clave está en diseñar el layout con claridad antes de codificar, separar los datos del formato, y probar con una sola fila antes de iterar sobre todo el dataset. Cada ajuste al formato —ya sea mover un bloque de texto o recalcular las coordenadas de una barra— incrementa el dominio sobre la herramienta y permite afinar el diseño hasta alcanzar un resultado de calidad profesional.
+
+## Referencias
+
+- ReportLab Docs — Introduction: [https://docs.reportlab.com/reportlab/userguide/ch1_intro/](https://docs.reportlab.com/reportlab/userguide/ch1_intro/)
+- ReportLab Docs — PLATYPUS: Page Layout and Typography Using Scripts: [https://docs.reportlab.com/reportlab/userguide/ch5_platypus/](https://docs.reportlab.com/reportlab/userguide/ch5_platypus/)

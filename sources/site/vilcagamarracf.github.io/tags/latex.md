@@ -1,0 +1,5 @@
+# Source: https://vilcagamarracf.github.io/tags/latex
+
+¿Qué es LaTeX? LaTeX es un sistema de composición de textos de alta calidad, utilizado mayormente en documentos técnicos o científicos de todo tipo de tamaños y empleandose en cualquier formato editorial. Es muy utilizado para la composición de artículos académicos, tesis y libros técnicos, donde la calidad tipográfica son comparables a la de una editorial científica de primera línea. Es considerado un programa profesional para creación de documentos donde su principal ventaja es que siempre generar un único resultado, el cual puede ser exportado a numerosos formatos. Tiene a su vez en cuenta numerosos aspectos tipográficos editables. ...
+
+[post link to Fórmulas científicas en la web con LaTeX y MathJax](https://vilcagamarracf.github.io/posts/02_formulas_metric/)
